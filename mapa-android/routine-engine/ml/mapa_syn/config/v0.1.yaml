@@ -1,0 +1,25 @@
+version: '0.1.1'
+seed: 20261027
+sources: [s3, ubiqlog]
+optional_sources: [pielot, lsapp]
+split_shares: [0.70, 0.15, 0.15]
+split_seeds: {train: 20261028, validate: 20261029, test: 20261030}
+minimum_observed_days: 28
+warmup_days: 14
+bootstrap_samples: 2000
+severities: {mild: 90.0, clear: 97.0, severe: 99.5}
+freshness_minutes: 60
+rest_hours: [22, 7]
+synthetic: {parents: 200, days: 120, seed: 20261031, with_events: false}
+behaviour_primary: synthetic
+behaviour_secondary: ubiqlog_real_check
+observation_sources: [synthetic, heartbeat_inferred_real]
+minimum_test_episodes_per_scenario_combined: 20
+report_real_counts_separately: true
+stop_before_injection_for_review: false
+s3_role: next_interaction_log_loss_only
+ubiqlog_role: evaluation_only_real_check
+real_check_max_episodes_per_person_scenario: 10
+real_check_max_windows_per_person_day: 1
+real_check_min_window_minutes: 180
+real_check_no_training: true

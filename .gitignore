@@ -1,0 +1,23 @@
+# Secrets: never commit
+.env
+**/.env
+local.properties
+**/google-services*.json
+*.jks
+*.keystore
+**/.secret.local
+**/emulator-seed.md
+
+# Build output
+**/build/
+**/.gradle/
+**/.kotlin/
+**/node_modules/
+**/.next/
+**/out/
+**/functions/lib/
+**/__pycache__/
+**/.pytest_cache/
+**/.venv/
+*.tsbuildinfo
+*.log

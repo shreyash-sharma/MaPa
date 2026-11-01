@@ -1,0 +1,60 @@
+{
+ "float32": {
+  "bytes": 47528,
+  "max_abs_logit_err": 2.86102294921875e-06,
+  "mean_abs_next_bin_prob_err": 2.912744889727037e-08,
+  "max_abs_next_bin_prob_err": 2.682209014892578e-07,
+  "logloss": 0.2629689872264862
+ },
+ "torch_logloss": 0.2629689872264862,
+ "int8_weights_dynamic": {
+  "bytes": 20360,
+  "max_abs_logit_err": 0.0716559886932373,
+  "mean_abs_next_bin_prob_err": 0.0017885345732793212,
+  "max_abs_next_bin_prob_err": 0.009570568799972534,
+  "logloss": 0.26298853754997253
+ },
+ "int8_full_static": {
+  "bytes": 25176,
+  "max_abs_logit_err": 2.6985507011413574,
+  "mean_abs_next_bin_prob_err": 0.058581482619047165,
+  "max_abs_next_bin_prob_err": 0.4186316728591919,
+  "logloss": 0.2728310823440552
+ },
+ "params": 10544,
+ "signature": {
+  "key": "serving_default",
+  "inputs": {
+   "args_0": [
+    [
+     1,
+     16
+    ],
+    "float32"
+   ],
+   "args_1": [
+    [
+     1,
+     48
+    ],
+    "float32"
+   ]
+  },
+  "outputs": {
+   "output_0": [
+    [
+     1,
+     16
+    ],
+    "float32"
+   ],
+   "output_1": [
+    [
+     1,
+     48
+    ],
+    "float32"
+   ]
+  }
+ }
+}

@@ -1,0 +1,143 @@
+@import "tailwindcss";
+
+@theme {
+  --color-surface: #fcf9f4;
+  --color-surface-dim: #f5efe6;
+  --color-surface-warm: #f2ece1;
+  --color-ink: #1a1816;
+  --color-ink-muted: #5c564e;
+  --color-ink-faint: #6b645c;
+  --color-terracotta: #c85a32;
+  --color-terracotta-ink: #a23e18;
+  --color-terracotta-glow: #e07a5f;
+  --color-terracotta-soft: #f4e5dc;
+  --color-line: #e7e0d3;
+  --color-line-strong: #cec3af;
+  --color-nocturne: #141311;
+  --color-nocturne-surface: #181614;
+  --color-nocturne-elevated: #221f1c;
+  --color-nocturne-line: #2d2824;
+  --color-nocturne-line-strong: #3d3630;
+  --color-nocturne-ink: #faf7f2;
+  --color-nocturne-muted: #a89f91;
+  --color-nocturne-faint: #857c71;
+}
+
+@theme inline {
+  /* One typeface everywhere. The sans/mono/serif utilities all resolve to Instrument Serif. */
+  --font-serif: var(--font-instrument), Georgia, serif;
+  --font-display: var(--font-instrument), Georgia, serif;
+  --font-sans: var(--font-instrument), Georgia, serif;
+  --font-mono: var(--font-instrument), Georgia, serif;
+  --font-deva: var(--font-noto-deva), var(--font-instrument), serif;
+  --font-tamil: var(--font-noto-tamil), serif;
+  --font-telugu: var(--font-noto-telugu), serif;
+  --font-bengali: var(--font-noto-bengali), serif;
+  --font-urdu: var(--font-noto-urdu), serif;
+  --font-jp: var(--font-noto-jp), serif;
+  --font-kr: var(--font-noto-kr), serif;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    background-color: var(--color-nocturne);
+    /* Instrument Serif is condensed with a small x-height; a larger root keeps body copy readable. */
+    font-size: 18px;
+  }
+
+  body {
+    background-color: var(--color-surface);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-synthesis-weight: none;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background-color: var(--color-terracotta-soft);
+    color: var(--color-ink);
+  }
+
+  section[id] {
+    scroll-margin-top: 4.5rem;
+  }
+
+  details summary::-webkit-details-marker {
+    display: none;
+  }
+}
+
+@layer components {
+  .paper-canvas {
+    background-color: var(--color-surface);
+    background-image: radial-gradient(rgba(206, 195, 175, 0.28) 0.5px, transparent 0.5px);
+    background-size: 32px 32px;
+  }
+
+  .nocturne-canvas {
+    background-color: var(--color-nocturne);
+    background-image: radial-gradient(rgba(224, 122, 95, 0.07) 0.75px, transparent 0.75px);
+    background-size: 36px 36px;
+  }
+
+  .slipcase-dark {
+    box-shadow: 0 -18px 40px -16px rgba(0, 0, 0, 0.28), 0 -6px 14px -6px rgba(0, 0, 0, 0.18);
+  }
+
+  .slipcase-paper {
+    box-shadow: 0 -16px 36px -14px rgba(26, 24, 22, 0.14), 0 -6px 12px -6px rgba(26, 24, 22, 0.06);
+  }
+
+  .hairline-b { border-bottom: 1px solid rgba(206, 195, 175, 0.45); }
+  .hairline-t { border-top: 1px solid rgba(206, 195, 175, 0.45); }
+  .hairline-l { border-left: 1px solid rgba(206, 195, 175, 0.45); }
+  .night-hairline-b { border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
+  .night-hairline-t { border-top: 1px solid rgba(255, 255, 255, 0.08); }
+
+  .tabular { font-variant-numeric: tabular-nums; }
+
+  .glyph { display: inline-block; will-change: transform, opacity, filter; }
+
+  /* Instrument Serif is condensed and single-weight: set it tight and tall, never synthesised bold. */
+  .font-display {
+    font-weight: 400;
+    font-synthesis: none;
+    letter-spacing: -0.015em;
+    line-height: 1.02;
+  }
+}
+
+/* Elements animated in by anime.js start hidden, but only once JS is confirmed running. */
+.js [data-reveal],
+.js [data-hero] {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .js [data-reveal],
+  .js [data-hero] {
+    opacity: 1;
+  }
+}
+
+/* splitText clips each word to slide it up; pad the clip box so descenders (g, p, y) and italic overhangs are not cut. */
+.hero-headline span[style^="overflow"] {
+  display: inline-block;
+  padding: 0.04em 0.12em 0.2em;
+  margin: -0.04em -0.12em -0.2em;
+}
+
+/* A bundled translation is a quick fetch away; hold the page back briefly rather than flash English. */
+.i18n-pending body {
+  visibility: hidden;
+}
+
+/* On short phones the chapter text needs the ruler's space; each chapter already names itself. */
+@media (max-width: 767px) and (max-height: 780px) {
+  .ml-ruler-wrap {
+    display: none;
+  }
+}

@@ -1,0 +1,104 @@
+rules_version = '2';
+
+// Mirrors core/src/main/kotlin/app/mapa/core/wire/Paths.kt. Change them together.
+// The parent's phone signs in anonymously; its uid IS the parentId.
+// Family members sign in with email and become members by redeeming an invite code.
+service cloud.firestore {
+  match /databases/{db}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function isParent(pid) { return signedIn() && request.auth.uid == pid; }
+    function isMember(pid) {
+      return signedIn() && exists(/databases/$(db)/documents/parents/$(pid)/members/$(request.auth.uid));
+    }
+    function canRead(pid) { return isParent(pid) || isMember(pid); }
+
+    match /parents/{pid} {
+      allow read: if canRead(pid);
+      allow write: if isParent(pid);
+
+      // Derived data written only by the parent's phone.
+      match /status/{doc}   { allow read: if canRead(pid); allow write: if isParent(pid); }
+      match /days/{date}    { allow read: if canRead(pid); allow write: if isParent(pid); }
+      match /events/{id}    { allow read: if canRead(pid); allow write: if isParent(pid); }
+      match /trends/{date}  { allow read: if canRead(pid); allow write: if isParent(pid); }
+
+      // A family member joins with a live invite code for this parent, and may leave.
+      // The parent can see and remove members.
+      match /members/{uid} {
+        allow read: if isParent(pid) || (signedIn() && request.auth.uid == uid);
+        allow delete: if isParent(pid) || (signedIn() && request.auth.uid == uid);
+        // Family-started setup: the parent's phone adds the family member who sent the link, in
+        // the same batch that accepts the pairing (hence getAfter).
+        allow create: if isParent(pid)
+          && request.resource.data.uid == uid
+          && request.resource.data.keys().hasOnly(['uid', 'name', 'pairingCode', 'addedAt'])
+          && request.resource.data.name is string && request.resource.data.name.size() <= 60
+          && getAfter(/databases/$(db)/documents/pairings/$(request.resource.data.pairingCode)).data.familyUid == uid
+          && getAfter(/databases/$(db)/documents/pairings/$(request.resource.data.pairingCode)).data.parentId == pid;
+        allow create: if signedIn() && request.auth.uid == uid
+          && request.resource.data.uid == uid
+          && request.resource.data.keys().hasOnly(['uid', 'name', 'inviteCode', 'addedAt'])
+          && request.resource.data.name is string && request.resource.data.name.size() <= 60
+          && get(/databases/$(db)/documents/invites/$(request.resource.data.inviteCode)).data.parentId == pid
+          && get(/databases/$(db)/documents/invites/$(request.resource.data.inviteCode)).data.expiresAt > request.time;
+      }
+
+      // Life tags: the parent or a member may add one; only the author or the parent removes it.
+      match /tags/{id} {
+        allow read: if canRead(pid);
+        allow create: if canRead(pid)
+          && request.resource.data.kind in ['UNWELL', 'TRAVELLING', 'GUESTS', 'FESTIVAL', 'CHECK_IN', 'OTHER']
+          && request.resource.data.startAt is int && request.resource.data.endAt is int
+          && request.resource.data.endAt > request.resource.data.startAt
+          && request.resource.data.endAt - request.resource.data.startAt <= 1000 * 60 * 60 * 24 * 14
+          && request.resource.data.byRole == (isParent(pid) ? 'parent' : 'family');
+        allow delete: if isParent(pid);
+      }
+
+      // The new-routine question: the phone asks, a member may only fill in the answer once.
+      match /routine/{doc} {
+        allow read: if canRead(pid);
+        allow write: if isParent(pid);
+        allow update: if isMember(pid)
+          && resource.data.answer == null
+          && request.resource.data.answer in ['yes', 'no']
+          && request.resource.data.answeredBy == request.auth.uid
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['answer', 'answeredBy', 'answeredAt']);
+      }
+    }
+
+    // Invite codes: fetched by exact code only, never listed, so codes can't be enumerated.
+    match /invites/{code} {
+      allow get: if signedIn();
+      allow list: if false;
+      allow create: if signedIn() && request.resource.data.parentId == request.auth.uid
+        && request.resource.data.expiresAt is timestamp
+        && request.resource.data.expiresAt < request.time + duration.value(25, 'h');
+      allow delete: if signedIn() && resource.data.parentId == request.auth.uid;
+    }
+
+    // Family-started setup. Fetched by exact code only. The family member creates it with the
+    // parent's name and language; the parent's phone accepts it once by setting parentId to itself.
+    match /pairings/{code} {
+      allow get: if signedIn();
+      allow list: if false;
+      allow create: if signedIn() && request.resource.data.familyUid == request.auth.uid
+        && request.resource.data.parentId == null
+        && request.resource.data.parentName is string && request.resource.data.parentName.size() <= 24
+        && request.resource.data.familyName is string && request.resource.data.familyName.size() <= 60
+        && request.resource.data.expiresAt is timestamp
+        && request.resource.data.expiresAt < request.time + duration.value(8, 'd');
+      allow update: if signedIn() && resource.data.parentId == null
+        && resource.data.expiresAt > request.time
+        && request.resource.data.parentId == request.auth.uid
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['parentId', 'acceptedAt']);
+      allow delete: if signedIn() && resource.data.familyUid == request.auth.uid;
+    }
+
+    // A family member's own links and push tokens.
+    match /users/{uid}/{rest=**} {
+      allow read, write: if signedIn() && request.auth.uid == uid;
+    }
+  }
+}

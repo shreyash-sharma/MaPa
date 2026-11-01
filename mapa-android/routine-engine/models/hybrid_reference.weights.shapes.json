@@ -1,0 +1,118 @@
+{
+  "cnn.convs.0.weight": [
+    16,
+    21,
+    3
+  ],
+  "cnn.convs.0.bias": [
+    16
+  ],
+  "cnn.convs.1.weight": [
+    16,
+    16,
+    3
+  ],
+  "cnn.convs.1.bias": [
+    16
+  ],
+  "cnn.convs.2.weight": [
+    16,
+    16,
+    3
+  ],
+  "cnn.convs.2.bias": [
+    16
+  ],
+  "cnn.convs.3.weight": [
+    16,
+    16,
+    3
+  ],
+  "cnn.convs.3.bias": [
+    16
+  ],
+  "cnn.head.weight": [
+    16,
+    37
+  ],
+  "cnn.head.bias": [
+    16
+  ],
+  "gru.weight_ih_l0": [
+    48,
+    37
+  ],
+  "gru.weight_hh_l0": [
+    48,
+    16
+  ],
+  "gru.bias_ih_l0": [
+    48
+  ],
+  "gru.bias_hh_l0": [
+    48
+  ],
+  "attention.in_proj_weight": [
+    48,
+    16
+  ],
+  "attention.in_proj_bias": [
+    48
+  ],
+  "attention.out_proj.weight": [
+    16,
+    16
+  ],
+  "attention.out_proj.bias": [
+    16
+  ],
+  "slow.weight_ih_l0": [
+    64,
+    9
+  ],
+  "slow.weight_hh_l0": [
+    64,
+    16
+  ],
+  "slow.bias_ih_l0": [
+    64
+  ],
+  "slow.bias_hh_l0": [
+    64
+  ],
+  "personal.0.weight": [
+    8,
+    7
+  ],
+  "personal.0.bias": [
+    8
+  ],
+  "hazard_head.weight": [
+    16,
+    61
+  ],
+  "hazard_head.bias": [
+    16
+  ],
+  "use_now_head.weight": [
+    1,
+    61
+  ],
+  "use_now_head.bias": [
+    1
+  ],
+  "behaviour_head.weight": [
+    1,
+    61
+  ],
+  "behaviour_head.bias": [
+    1
+  ],
+  "confidence_head.weight": [
+    1,
+    61
+  ],
+  "confidence_head.bias": [
+    1
+  ]
+}

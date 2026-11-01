@@ -1,0 +1,1 @@
+tester,date_start,model,android_version,oem_skin_version,ram_gb,arm,hours,work_beats,alarm_beats,expected_beats,max_gap_min_phone_on,pct_time_stale_60m,reboot_recovery_min,boot_broadcast_received,exit_reasons,unlocks_backfill,unlocks_live,battery_pct_per_day,server_pct_stale_60m,usage_access_ok,notes

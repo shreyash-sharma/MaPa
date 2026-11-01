@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "If you use MaPa or the MaPa Rhythm model, please cite it as below."
+title: "MaPa: an on-device rhythm model for families who live apart"
+authors:
+  - family-names: Sharma
+    given-names: Shreyash
+version: 0.1.0
+date-released: 2026-11-01
+license: Apache-2.0
+repository-code: "https://github.com/shreyash-sharma/MaPa"

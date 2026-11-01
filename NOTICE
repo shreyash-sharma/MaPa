@@ -1,0 +1,17 @@
+MaPa
+Copyright 2026 Shreyash Sharma
+
+This product is licensed under the Apache License, Version 2.0 (see LICENSE).
+If you use, copy or build on MaPa, please keep this NOTICE and credit MaPa (see CITATION.cff).
+
+The MaPa Rhythm model was trained on data derived from these sources (both CC BY 4.0):
+
+- S3 Dataset: Juan Manuel Espin Lopez, Alberto Huertas Celdran, Javier G. Marin-Blazquez,
+  Francisco Esquembre Martinez and Gregorio Martinez Perez. https://doi.org/10.6084/m9.figshare.14410229.v2
+- UbiqLog (smartphone lifelogging): Rawassizadeh, R. (2013). UCI Machine Learning Repository.
+  https://doi.org/10.24432/C55327
+
+Changes to the source data: direct identifiers and private payloads removed; relative time, heartbeat
+inference, aggregation, statistical modelling and injected variants. See data-card/.
+
+The landing page and apps use these fonts under their own licences: Newsreader and Manrope (SIL Open Font License).

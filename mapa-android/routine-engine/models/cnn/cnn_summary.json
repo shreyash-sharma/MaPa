@@ -1,0 +1,61 @@
+{
+ "gru": {
+  "params": 10864,
+  "logloss_all": 0.277452290058136,
+  "logloss_profile_all": 0.3008211553096771,
+  "logloss_next_bin": 0.4282603859901428,
+  "logloss_profile_next_bin": 0.46377453207969666,
+  "logloss_4h_ahead": 0.20045915246009827,
+  "logloss_profile_4h_ahead": 0.21704977750778198
+ },
+ "cnn": {
+  "xs": {
+   "params": 1872,
+   "state": 1028,
+   "logloss_all": 0.27884355187416077,
+   "logloss_profile_all": 0.3008211553096771,
+   "logloss_next_bin": 0.43004748225212097,
+   "logloss_profile_next_bin": 0.46377453207969666,
+   "logloss_4h_ahead": 0.20195694267749786,
+   "logloss_profile_4h_ahead": 0.21704977750778198,
+   "streaming_max_abs_error": 1.9073486328125e-06,
+   "train_seconds": 40.470977544784546
+  },
+  "s": {
+   "params": 5360,
+   "state": 2020,
+   "logloss_all": 0.2778131067752838,
+   "logloss_profile_all": 0.3008211553096771,
+   "logloss_next_bin": 0.42882561683654785,
+   "logloss_profile_next_bin": 0.46377453207969666,
+   "logloss_4h_ahead": 0.1999034732580185,
+   "logloss_profile_4h_ahead": 0.21704977750778198,
+   "streaming_max_abs_error": 2.384185791015625e-06,
+   "train_seconds": 50.13730502128601
+  },
+  "m": {
+   "params": 18096,
+   "state": 4004,
+   "logloss_all": 0.2765423357486725,
+   "logloss_profile_all": 0.3008211553096771,
+   "logloss_next_bin": 0.42792603373527527,
+   "logloss_profile_next_bin": 0.46377453207969666,
+   "logloss_4h_ahead": 0.19700565934181213,
+   "logloss_profile_4h_ahead": 0.21704977750778198,
+   "streaming_max_abs_error": 3.337860107421875e-06,
+   "train_seconds": 79.4553325176239
+  },
+  "l": {
+   "params": 48148,
+   "state": 6732,
+   "logloss_all": 0.276053786277771,
+   "logloss_profile_all": 0.3008211553096771,
+   "logloss_next_bin": 0.4271218180656433,
+   "logloss_profile_next_bin": 0.46377453207969666,
+   "logloss_4h_ahead": 0.19637998938560486,
+   "logloss_profile_4h_ahead": 0.21704977750778198,
+   "streaming_max_abs_error": 2.384185791015625e-06,
+   "train_seconds": 607.1426527500153
+  }
+ }
+}

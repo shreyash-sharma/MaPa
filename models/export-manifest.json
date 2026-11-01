@@ -1,0 +1,85 @@
+{
+  "model": "MaPa Rhythm Hybrid",
+  "checkpoint_sha256": "11c70d4366043ed1d91218bf8f9e1eb118f170e88e3f3c75e0ea40e06c17c4d1",
+  "decision_config": {
+    "floor": 0.5,
+    "score_kind": "combined",
+    "kind": "personal",
+    "q": 0.9,
+    "morning": false,
+    "silence_floor": 32,
+    "cold_start": true,
+    "model_weight": 1.0,
+    "uncertainty_margin": 0.1
+  },
+  "forecast_calibration": {
+    "model_weight": 0.15000000000000002,
+    "profile_weight": 0.85,
+    "source_sha256": "8b2e07d58605f7006770e4f9306706d953e23623ecfdb1aac28cb58866c4524b",
+    "selection_metric": "train OOF next-bin log-loss; person-bootstrap intervals overlap"
+  },
+  "final_fit_protocol_version": 16,
+  "export_protocol_version": 18,
+  "runtime": "ExecuTorch 0.7.0 / XNNPACK; CPU PyTorch 2.8.0+cpu",
+  "execu_torch_parity": {
+    "stream_max_error": 2.384185791015625e-06,
+    "daily_max_error": 1.7881393432617188e-07,
+    "limit": 0.001,
+    "pass": true
+  },
+  "kotlin_parity": {
+    "tests": 2,
+    "failures": 0,
+    "stream_max_error": 9.5367431640625e-07,
+    "daily_max_error": 8.940696716308594e-08,
+    "tolerance": 0.001,
+    "result": "PASS",
+    "test_class": "app.mapa.routine.HybridParityTest"
+  },
+  "files": {
+    "cold-start-priors.json": {
+      "bytes": 5673,
+      "sha256": "34294c55894c9600440238a007d0179bd3816f06fa6eebfb55d3a028d099e9b7"
+    },
+    "forecast-calibration.json": {
+      "bytes": 1231,
+      "sha256": "8b2e07d58605f7006770e4f9306706d953e23623ecfdb1aac28cb58866c4524b"
+    },
+    "golden_hybrid_daily.txt": {
+      "bytes": 17065,
+      "sha256": "feef1e0b83dd0adf90d85d54cb6a2b7ddafbbb83b6d3daaae41db953dd9c309a"
+    },
+    "golden_hybrid_reference.txt": {
+      "bytes": 130143,
+      "sha256": "dd48a90f734bbda24ed3ee760ac5595116067d48103ffaecd9bbdbed1b1dcb17"
+    },
+    "hybrid_reference.weights.shapes.json": {
+      "bytes": 1164,
+      "sha256": "3892c71c1009f51ee9b42fc59c6cb6bc2012bfee7bebc80733c0678063dc3b06"
+    },
+    "hybrid_reference.weights.txt": {
+      "bytes": 197265,
+      "sha256": "aefa1bf13c76501b64d05ccd52a105862fa0039d8e5676ee49d572828c162060"
+    },
+    "rhythm-daily.pte": {
+      "bytes": 123136,
+      "sha256": "c604565757a61a08b63db81ee62f9adc3ea2e2c866128626812c36acf10929f6"
+    },
+    "rhythm-step.pte": {
+      "bytes": 103684,
+      "sha256": "d915acd48735027138e689e2815d6f03c27aabaaec5ef09e04ee5f9c21cc43d8"
+    },
+    "runtime-parity.json": {
+      "bytes": 440,
+      "sha256": "505c7289d15a7e2d62ae4fb757aa007d419b143c3b059a0fe4de91fc2d68f7eb"
+    },
+    "selection.json": {
+      "bytes": 1875,
+      "sha256": "359d8c688d9c41e09063b591a7aee07659296f0fee279ef9fc246705c461b1de"
+    },
+    "trained-export.json": {
+      "bytes": 1184,
+      "sha256": "7864bdbc77c75f4da3dbcf39db9b8b871961e4320cbc3bb98588516c57bfc742"
+    }
+  }
+}

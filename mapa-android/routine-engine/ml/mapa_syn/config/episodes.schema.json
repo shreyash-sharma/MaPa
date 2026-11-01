@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "MaPa-Syn v0.1 episode with observation provenance",
+  "type": "object",
+  "required": ["episode_id", "source", "pid", "split", "seed", "day_index", "scenario", "observation_basis", "injected", "expected", "ground_truth"],
+  "properties": {
+    "episode_id": {"type": "string"},
+    "source": {"enum": ["synthetic", "s3", "ubiqlog"]},
+    "pid": {"type": "string"},
+    "split": {"enum": ["train", "validate", "test"]},
+    "seed": {"type": "integer"},
+    "day_index": {"type": "integer", "minimum": 14},
+    "scenario": {"type": "string"},
+    "observation_basis": {"enum": ["synthetic", "heartbeat_inferred"]},
+    "injected": {"type": "object"},
+    "expected": {"type": "object"},
+    "ground_truth": {"type": "object", "required": ["real_world_event"], "properties": {"real_world_event": {"const": "unknown"}}}
+  },
+  "allOf": [
+    {"if": {"properties": {"source": {"const": "synthetic"}}}, "then": {"properties": {"observation_basis": {"const": "synthetic"}}}},
+    {"if": {"properties": {"source": {"enum": ["s3", "ubiqlog"]}}}, "then": {"properties": {"observation_basis": {"const": "heartbeat_inferred"}}}}
+  ]
+}
