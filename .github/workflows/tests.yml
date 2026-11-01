@@ -1,0 +1,22 @@
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  engine-and-core:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Engine and core tests (Hybrid parity, pipeline golden, rules, wire)
+        working-directory: mapa-android/app
+        run: |
+          chmod +x gradlew
+          ./gradlew :routine-engine:test :core:test -PmapaModels=${{ github.workspace }}/mapa-android/routine-engine/models --no-daemon

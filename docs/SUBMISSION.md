@@ -79,6 +79,8 @@ Tone: calm, warm, specific. Real screens from the Pixel 6a. No music swell, no a
 
 Small type on the end card: "Disruptions in the test are injected. Early pilot; no accuracy claim."
 
+Quote on the end card: "I wanted a simple way to know whether my parents' everyday routine seems normal, without making them feel watched." (Shreyash)
+
 ### Shot list (capture on the Pixel, real project)
 1. Landing page hero (desktop, 1280 px) and the model section dial.
 2. Family: sign-in screen, Add a parent, link screen.

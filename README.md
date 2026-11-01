@@ -1,98 +1,116 @@
 <div align="center">
 
-<img src="assets/emblem.png" alt="MaPa" width="96">
-
-# MaPa
-
-**Know when their day looks different, without ever asking.**
-
-A small AI model on your parent's phone learns their daily rhythm. You see one calm picture of their day.
-
-[Demo video](#) · [Landing page](#) · [Download the APKs](#try-it) · [Model card](models/MODEL_CARD.md)
-
-![License](https://img.shields.io/badge/license-Apache--2.0-2F6E4A) ![Android](https://img.shields.io/badge/Android-Kotlin%20%2B%20Compose-1C1C19) ![ExecuTorch](https://img.shields.io/badge/Meta-ExecuTorch-A23E18) ![Muse Spark](https://img.shields.io/badge/Meta-Muse%20Spark%20via%20Baseten-A23E18) ![Model](https://img.shields.io/badge/model-9%2C594%20parameters-55657A)
+<img src="assets/banner.png" alt="MaPa: know when their day looks different, without ever asking." width="100%">
 
 <br>
 
-<img src="assets/screen-today.png" width="200" alt="Today"> <img src="assets/screen-day.png" width="200" alt="Day view"> <img src="assets/screen-rhythm.png" width="200" alt="Rhythm"> <img src="assets/screen-parent.png" width="200" alt="Parent home">
+**A small AI model on your parent's phone learns their daily rhythm.<br>You see one calm picture of their day, and hear the same day when it looks different.**
 
-<sub>Family app: Today, the day view, the model on the phone. Parent app: one screen. (Sample data.)</sub>
+[**Watch the demo**](#) · [Landing page](#) · [Try the APKs](#try-it-in-2-minutes) · [Model card](models/MODEL_CARD.md) · [Dataset card](data-card/DATASET_CARD.md)
+
+![tests](https://github.com/shreyash-sharma/MaPa/actions/workflows/tests.yml/badge.svg) ![License](https://img.shields.io/badge/license-Apache--2.0-2F6E4A) ![Android](https://img.shields.io/badge/Android-Kotlin%20%2B%20Compose-1C1C19) ![ExecuTorch](https://img.shields.io/badge/Meta-ExecuTorch-A23E18) ![Muse Spark](https://img.shields.io/badge/Meta-Muse%20Spark%20via%20Baseten-A23E18) ![Model](https://img.shields.io/badge/model-9%2C594%20parameters-55657A)
 
 </div>
 
----
+## For judges, in 30 seconds
+
+| | |
+|---|---|
+| **Creative** | Each parent's phone learns that parent's own rhythm, and it works from the first day. No fixed timer. |
+| **Technical** | Our own 9,594-parameter model (CNN + GRU + 30-day LSTM), trained from scratch, running on the phone with ExecuTorch. |
+| **It works** | Running on a real Pixel 6a with a real Firebase project: 0.36 ms per 15-minute step. |
+| **It holds up** | Illness guards, old data never shown as a good day, tested Firestore rules, no AI key in the public app. |
+| **Meta** | ExecuTorch on the parent's phone; Meta's Muse Spark open model, served on Baseten, in the family app. |
+
+<div align="center">
+<img src="assets/tour.gif" width="260" alt="A tour of the family and parent apps (sample data)"><br>
+<sub>The family app and the parent app on a Pixel 6a (sample data).</sub>
+</div>
 
 ## The problem
 
 Many Indian parents live on their own, while their children work in another city or another country.
-A daily "Did you eat? Are you up?" call feels like checking up on them.
-Alarm apps wait for a fixed timer, often a whole day, and know nothing about the person.
+A daily "Are you up? Did you eat?" call feels like checking up on them.
+Alarm apps wait on a fixed timer and know nothing about the person.
 
-## What MaPa does
-
-- **Learns one person's rhythm.** A model on the parent's phone learns when *this* parent usually starts and spends the day.
-- **Shows one calm picture.** The family sees today against the usual day, and hears the same day when a day looks very different.
-- **Asks almost nothing of the parent.** The family does the setup. The parent taps Yes and allows two permissions.
-
-## Why it wins
-
-| | |
+| A 24-hour timer app | MaPa |
 |---|---|
-| **Per-person model, on the phone** | A rhythm model of our own, trained from scratch, that adapts to each parent from day one |
-| **Meta ExecuTorch** | The model runs on the parent's phone: 0.36 ms per 15-minute step on a Pixel 6a |
-| **Meta's Muse Spark open model** | Served on Baseten, in the family app: daily notes in Indian languages, life tags from the family's own words |
-| **Only conclusions leave the phone** | Never app names, messages, location, audio or screen contents |
+| Waits a fixed time, the same for everyone | Learns when *this* parent usually starts and spends the day |
+| A quiet morning stays silent until the timer runs out | The family hears the same day when a day looks very different |
+| One alarm, nothing in between | One calm picture every day, and an alert only when it matters |
 
 ## How it works
 
-<div align="center"><img src="assets/architecture.svg" width="760" alt="Architecture: the parent's phone runs the model on ExecuTorch and sends only conclusions; the family app shows the day and uses Muse Spark for the note"></div>
+<div align="center"><img src="assets/architecture.svg" width="760" alt="The parent's phone runs the model on ExecuTorch and sends only conclusions; the family app shows the day and uses Muse Spark for the note"></div>
 
-1. Every 15 minutes the parent's phone notes whether it was used. The time only, never which app.
-2. The MaPa Rhythm Hybrid scores the day against this parent's own rhythm, on the phone.
-3. Only the conclusion travels: Active, Quiet, Unusual, Monitoring unavailable or Paused by parent.
-4. Old data always shows as "Monitoring unavailable", never as a good day.
+1. **Family sets it up, parent taps Yes.** The parent also allows two permissions: usage access and physical activity.
+2. **Every 15 minutes** the parent's phone notes whether it was used. The time only, never which app.
+3. **The MaPa Rhythm Hybrid** scores the day against this parent's own rhythm, on the phone.
+4. **Only the conclusion travels:** Active, Quiet, Unusual, Monitoring unavailable or Paused by parent.
 
 ## The model
 
 | Parameters | Inputs | Step time (Pixel 6a) | On the phone |
 |---:|---:|---:|---:|
-| 9,594 | 21 per 15 minutes | 0.36 ms | 103,684 + 123,136 bytes (ExecuTorch) |
+| 9,594 | 21 per 15 minutes | 0.36 ms | 2 ExecuTorch programs, 103,684 + 123,136 bytes |
 
 A CNN and a GRU read today, a 30-day LSTM reads recent days, and a starting profile lets it work from the first day.
-Trained on real smartphone logs, plus parent timelines generated by a statistical model learned from those logs.
-Every disruption is injected. Details: [model card](models/MODEL_CARD.md) · [dataset card](data-card/DATASET_CARD.md).
+Trained on real smartphone logs, plus parent timelines generated by a statistical model learned from those logs. Every disruption is injected.
 
 ## Results
 
-Held-out test, 39 people, opened once.
+<div align="center"><img src="assets/results.png" width="820" alt="False alerts per person-week and injected mild disruptions caught: MaPa against three baselines"></div>
 
-| | False alerts per person-week | Injected disruptions caught (mild · clear · severe) |
+| Held-out test, 39 people, opened once | False alerts / person-week | Injected caught: mild · clear · severe |
 |---|---:|---|
 | **MaPa** | **2.4** | **40/40 · 31/31 · 22/22** |
 | 4-hour rule | 6.1 | 20/40 · 31/31 · 22/22 |
 | 8-hour rule | 2.4 | 5/40 · 10/31 · 22/22 |
 | Statistics only | 3.6 | 7/40 · 19/31 · 22/22 |
 
-> **Limits.** Test disruptions are injected, not observed emergencies. Real data is under 1% of training days, and the
-> real people were mostly younger than our users. On normal days that only look quiet, MaPa still alerted more often
-> than we want (139 of 368 injected normal-quiet episodes). An early pilot with our own parents is planned; we make no
-> accuracy claim from it. Full numbers: [docs/SUBMISSION.md](docs/SUBMISSION.md).
+> [!NOTE]
+> **Limits.** Test disruptions are injected, not observed emergencies. Real data is under 1% of training days, and
+> the real people were mostly younger than our users. On normal days that only look quiet, MaPa still alerted more
+> often than we want (139 of 368 injected normal-quiet episodes). An early pilot with our own parents is planned; we
+> make no accuracy claim from it.
 
-## Privacy by design
+## What is real, what is staged
 
-- The parent's phone never calls an AI service.
-- Usage times only: no GPS, camera, microphone, messages or app names.
-- The parent can pause, see who can see, stop sharing and delete everything.
-- MaPa is not a medical or emergency service. It makes no health or safety claims.
+| Real | Staged or sample |
+|---|---|
+| The model, trained and tested once on held-out people | The sample days shown in the screenshots and the tour |
+| The model running on a Pixel 6a with ExecuTorch | Any "Unusual" day shown in the demo video |
+| The apps on a real Firebase project, with Google sign-in | The early pilot (planned, not started) |
+| Real calls to Meta's Muse Spark open model on Baseten | |
 
-## How we use Meta
+## How we use Meta (with proof)
 
-| | Where | What it does |
+| | What it does | Code |
 |---|---|---|
-| **ExecuTorch** (XNNPACK) | Parent's phone | Runs the MaPa Rhythm Hybrid every 15 minutes; matches PyTorch to 2.4e-6 |
-| **Muse Spark open model**, via Baseten | Family app | Writes the daily note (English, Hindi; Marathi and Tamil after a back-translation check), turns the family's words into a life tag, answers Ask MaPa. It sees a name-free summary only. |
+| **ExecuTorch** | Runs the model on the parent's phone (XNNPACK); matches PyTorch to 2.4e-6 | [export](mapa-android/routine-engine/ml/mapa_train/export_hybrid.py) · [phone loader](mapa-android/app/parent/src/main/kotlin/app/mapa/parent/rhythm/ExecuTorchHybrid.kt) · [pipeline](mapa-android/routine-engine/engine/src/main/kotlin/app/mapa/routine/HybridPipeline.kt) |
+| **Muse Spark open model**, via Baseten | Daily note (English, Hindi; Marathi and Tamil after a back-translation check), life tags from the family's words, Ask MaPa. It sees a name-free summary only. | [client](mapa-android/app/core/src/main/kotlin/app/mapa/core/cloud/ChatClient.kt) · [translator](mapa-android/app/core/src/main/kotlin/app/mapa/core/cloud/NoteTranslator.kt) · [spend caps](mapa-android/app/core/src/main/kotlin/app/mapa/core/cloud/AiBudget.kt) |
 
-## Try it
+## Built to hold up
+
+- **Only conclusions leave the phone.** No GPS, camera, microphone, messages or app names. The parent's phone never calls an AI service.
+- **Old data is never a good day.** A silent phone shows "Monitoring unavailable".
+- **Illness is not learned as normal.** New days wait before they are learned; tagged days (unwell, travelling, guests, festival) are skipped.
+- **Security rules with tests.** Firestore rules are tested ([rules tests](mapa-android/app/backend/rules-test)).
+- **No AI key in the public app; spend caps** on every cloud call. Health questions are answered on the phone and never sent.
+
+## Reproduce
+
+```bash
+cd mapa-android/app
+# Phone parity, the full pipeline golden check, rules and wire tests
+./gradlew :routine-engine:test :core:test -PmapaModels=../routine-engine/models
+# Python features match the phone
+cd ../routine-engine/ml && python -m mapa_train.parity --features-only
+```
+
+The held-out evaluation needs the MaPa-Rhythm dataset (to be published on Hugging Face).
+
+## Try it in 2 minutes
 
 <details>
 <summary><b>Install the APKs</b></summary>
@@ -100,36 +118,37 @@ Held-out test, 39 people, opened once.
 1. Download `MaPa-Parent.apk` and `MaPa-Family.apk` from Releases (link added at release).
 2. Family phone: open MaPa Family, tap **Continue with Google**, then **Add a parent**.
 3. Parent phone: open the link, tap **Yes, share**, turn on the switch.
-4. On Android 13 and later: if the switch says "Restricted setting", open App info, tap ⋮, tap **Allow restricted settings**.
+4. Android 13 and later: if the switch says "Restricted setting", open App info, tap ⋮, tap **Allow restricted settings**.
 
 </details>
 
 <details>
 <summary><b>Build from source</b></summary>
 
-Requirements: JDK 17, Android SDK 35.
-
-```bash
-cd mapa-android/app
-./gradlew :parent:assembleDebug :family:assembleDebug
-./gradlew :routine-engine:test :core:test -PmapaModels=../routine-engine/models
-```
-
+Requirements: JDK 17 and Android SDK 35. `./gradlew :parent:assembleDebug :family:assembleDebug` in `mapa-android/app`.
 Without a `google-services.json` the apps use the local Firebase Emulator Suite (`backend/`).
-An optional Baseten key goes in `mapa-android/app/.env` as `mapa.basetenKey=...` (git-ignored).
 
 </details>
 
-## Repository
+## Why we built it
+
+> I live away from my parents, and like many adult children, I often wonder how their day is going. Calling them repeatedly isn't practical, and I don't want to make them feel monitored through cameras, GPS trackers or wearables. What I really want is a simple way to know whether their everyday routine seems normal. MaPa uses the smartphone they already carry to learn their activity patterns and identify unusual periods of inactivity. With their consent, it helps families know when a gentle check-in might be worthwhile, without compromising their privacy or independence.
+>
+> — Shreyash Sharma, founder
+
+<details>
+<summary><b>Repository map</b></summary>
 
 | Folder | Contents |
 |---|---|
 | [`mapa-android/app`](mapa-android/app) | Parent and family apps (Kotlin, Jetpack Compose), Firebase rules |
 | [`mapa-android/routine-engine`](mapa-android/routine-engine) | On-device engine, the Kotlin model, parity tests, training code (`ml/`) |
 | [`models`](models) | The two ExecuTorch programs and the model card |
-| [`data-card`](data-card) | Dataset card, licences, credits (the data is published separately) |
+| [`data-card`](data-card) | Dataset card, licences and credits |
 | [`landing_site`](landing_site) | The landing page (Next.js) |
 | [`docs`](docs) | Design notes, status, submission text |
+
+</details>
 
 ## Licence and credits
 
