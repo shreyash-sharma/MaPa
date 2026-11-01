@@ -51,29 +51,27 @@ class GoldenParityTest {
         return Golden(dowOffset, days, rates.toTypedArray(), ticks)
     }
 
+    /**
+     * The GRU fallback's profile and network match Python. The network is fed the golden file's own inputs:
+     * that file predates the 21-input contract (input 14 became state entropy on 28 Oct), so today's feature
+     * builder is checked by FeatureContractParityTest instead.
+     */
     @Test
-    @org.junit.jupiter.api.Disabled("Old GRU fallback golden (19 Oct): input 14 is now state entropy (21-input contract, 28 Oct). The shipped models are checked by FeatureContractParityTest, CnnParityTest, HybridParityTest and HybridPipelineTest.")
-    fun profileFeaturesAndLogitsMatchPython() {
+    fun profileAndNetworkMatchPython() {
         val g = load()
         val weights = RhythmWeights.load(File(models, "rhythm_v2.weights.txt"))
         val profile = Profile.build(g.history, weights.prior())
         for (dt in 0 until 3) for (b in 0 until Bins.PER_DAY) {
             assertEquals(g.rate[dt][b], profile.rate[dt][b], 1e-6, "profile rate (prior is stored as float32) $dt/$b")
         }
-        val fb = FeatureBuilder(g.dowOffset)
         val net = KotlinGruBackbone(weights)
         val h = FloatArray(net.hiddenSize)
-        var maxX = 0.0
         var maxZ = 0.0
         for (tick in g.ticks) {
-            val row = fb.build(tick.obs, profile)
-            for (i in tick.x.indices) maxX = maxOf(maxX, abs(row.x[i] - tick.x[i]).toDouble())
-            val z = net.step(row.x, h)
+            val z = net.step(tick.x, h)
             for (i in 0 until Bins.HORIZON) maxZ = maxOf(maxZ, abs(z[i] - tick.z[i]).toDouble())
         }
         assertTrue(g.ticks.size >= 96)
-        assertTrue(g.ticks.any { it.obs.moved == true }, "golden parent should carry a movement signal")
-        assertTrue(maxX < 1e-5, "feature drift $maxX")
         assertTrue(maxZ < 1e-3, "logit drift $maxZ")
     }
 }
