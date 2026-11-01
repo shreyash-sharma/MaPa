@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420" font-family="Manrope, system-ui, sans-serif" font-size="14">
+  <rect width="960" height="420" fill="#FCF9F4"/>
+  <g fill="#F6F3EE" stroke="#E5E2DD">
+    <rect x="30" y="40" width="380" height="340" rx="20"/>
+    <rect x="550" y="40" width="380" height="340" rx="20"/>
+  </g>
+  <text x="50" y="72" font-size="18" fill="#1C1C19" font-family="Newsreader, Georgia, serif">Parent's phone</text>
+  <text x="570" y="72" font-size="18" fill="#1C1C19" font-family="Newsreader, Georgia, serif">Family member's phone</text>
+  <g fill="#1C1C19">
+    <text x="50" y="110">Usage access: when the phone was used</text>
+    <text x="50" y="132" fill="#4B4640">(times only, never which app)</text>
+    <text x="50" y="172">21 inputs every 15 minutes</text>
+    <text x="50" y="212">MaPa Rhythm Hybrid on ExecuTorch</text>
+    <text x="50" y="234" fill="#4B4640">CNN + GRU, 30-day LSTM, starting profile</text>
+    <text x="50" y="274">Decision layer: own alert line, 8-hour floor</text>
+    <text x="50" y="296" fill="#4B4640">old data = "Monitoring unavailable"</text>
+    <text x="50" y="350" fill="#A23E18">Never calls an AI service</text>
+    <text x="570" y="110">Today, History, Rhythm</text>
+    <text x="570" y="150">Alerts, checked every 15 minutes</text>
+    <text x="570" y="212">Meta's Muse Spark open model (Baseten)</text>
+    <text x="570" y="234" fill="#4B4640">daily note, life tags, Ask MaPa</text>
+    <text x="570" y="256" fill="#4B4640">name-free summary only</text>
+    <text x="570" y="350" fill="#A23E18">Health questions never sent</text>
+  </g>
+  <defs><marker id="a" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#A23E18"/></marker></defs>
+  <line x1="410" y1="210" x2="548" y2="210" stroke="#A23E18" stroke-width="2.5" marker-end="url(#a)"/>
+  <text x="420" y="196" fill="#A23E18" font-size="13">conclusions only</text>
+  <text x="440" y="232" fill="#4B4640" font-size="12">via Firebase</text>
+</svg>
