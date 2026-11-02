@@ -8,20 +8,21 @@ import app.mapa.routine.Bins
 import app.mapa.routine.ColdStartPriors
 import app.mapa.routine.HybridModel
 import app.mapa.routine.HybridPipeline
+import app.mapa.routine.HybridDecisionPolicy
 import app.mapa.routine.KotlinHybrid
 import app.mapa.routine.RhythmBackbone
 import app.mapa.routine.RhythmBackbones
 import app.mapa.routine.RhythmWeights
 
 /**
- * Loads the bundled rhythm model once per process. The MaPa Rhythm Hybrid (tested once on held-out people) decides
+ * Loads the bundled rhythm model once per process. The MaPa Rhythm Hybrid v2 policy decides
  * Unusual from day one and runs on ExecuTorch when both programs load and agree with the Kotlin reference. The
  * causal 1D-CNN still drives the "usually by" forecast and the nightly personal head. The earlier GRU stays as the
  * last resort if the CNN files are missing from the build.
  */
 object ModelStore {
     const val CNN_ID = "rhythm_cnn-cal1"
-    const val HYBRID_ID = "rhythm_hybrid-v1+cnn-cal1"
+    const val HYBRID_ID = "rhythm_hybrid-v2-policy+cnn-cal1"
     private const val HYBRID_WEIGHTS = "models/hybrid_reference.weights.txt"
     private const val HYBRID_PRIORS = "models/hybrid_priors.txt"
     private const val HYBRID_STEP = "models/rhythm-step.pte"
@@ -88,7 +89,8 @@ object ModelStore {
             factory?.stats?.runtime = runtime
             factory?.stats?.let { st -> if (st.benchMicros == 0L) st.benchMicros = benchmark(m) }
             m.reset()
-            HybridPipeline(factory?.stats?.let { TimedHybrid(m, it) } ?: m, priors, Bins.EPOCH_DOW)
+            HybridPipeline(factory?.stats?.let { TimedHybrid(m, it) } ?: m, priors,
+                Bins.EPOCH_DOW, HybridDecisionPolicy.V2)
         }
     }
 

@@ -10,6 +10,19 @@ import kotlin.test.assertTrue
 class HybridPipelineTest {
     private val root = File(System.getProperty("mapa.models") ?: "models", "hybrid")
 
+    private class QuietModel : HybridModel {
+        override val hiddenSize = 1
+        override fun reset() = Unit
+        override fun encodeDaily(rows: Array<FloatArray>, count: Int) = floatArrayOf(0f)
+        override fun step(x: FloatArray, slowVector: FloatArray) = FloatArray(19).also {
+            it[0] = -10f   // near-zero next-use hazard
+            it[17] = -6f   // low unusual-quiet score
+            it[18] = 6f    // high confidence
+        }
+        override fun saveState() = floatArrayOf()
+        override fun loadState(state: FloatArray) = Unit
+    }
+
     private class Golden(val dow: Int, val counts: List<IntArray>, val days: Map<Int, List<String>>, val bins: Map<Pair<Int, Int>, List<String>>)
 
     private fun golden(): Golden {
@@ -119,9 +132,89 @@ class HybridPipelineTest {
         val g = golden()
         val p = pipeline(g.dow)
         for (s in 0 until Bins.PER_DAY) p.step(BinObservation(s, g.counts[0][s], false, 80))
-        p.tagToday()
+        p.tagToday(1)
         for (s in 0 until Bins.PER_DAY) p.step(BinObservation(Bins.PER_DAY + s, g.counts[1][s], false, 80))
         val next = p.step(BinObservation(2 * Bins.PER_DAY, g.counts[2][0], false, 80))
         assertEquals(1, next.historyDays, "day 0 is learned, the tagged day 1 is not")
+    }
+
+    @Test
+    fun v2MovesTheAbsoluteFloorToTwelveHoursAndSuppressesTaggedAlerts() {
+        val priors = ColdStartPriors(
+            center = FloatArray(9), scale = FloatArray(9) { 1f },
+            population = FloatArray(5), centroids = List(5) { FloatArray(9) },
+            archetypes = List(5) { FloatArray(5) }, pseudoDays = 3.0,
+        )
+        val v1 = HybridPipeline(QuietModel(), priors, 0, HybridDecisionPolicy.V1)
+        val v2 = HybridPipeline(QuietModel(), priors, 0, HybridDecisionPolicy.V2)
+        var v1AtEightHours = false
+        var v2AtEightHours = false
+        var v2AtTwelveHours = false
+        for (t in 0..75) {
+            val obs = BinObservation(t, 0, charging = false, battery = 80)
+            val a = v1.step(obs)
+            val b = v2.step(obs)
+            if (t == HybridPipeline.DAY_START + 31) {
+                v1AtEightHours = a.pleaseCall
+                v2AtEightHours = b.pleaseCall
+            }
+            if (t == HybridPipeline.DAY_START + 47) v2AtTwelveHours = b.pleaseCall
+        }
+        assertTrue(v1AtEightHours, "v1 must preserve its 8-hour floor")
+        assertTrue(!v2AtEightHours, "v2 must not use the v1 8-hour floor")
+        assertTrue(v2AtTwelveHours, "v2 must alert at the 12-hour observed-quiet floor")
+
+        val tagged = HybridPipeline(QuietModel(), priors, 0, HybridDecisionPolicy.V2)
+        tagged.tagToday(0) // also cover a tag delivered before the first bin of the day
+        val results = (0..75).map { t -> tagged.step(BinObservation(t, 0, false, 80)) }
+        assertTrue(results.none { it.pleaseCall || it.worthALook },
+            "v2 must suppress both alert levels for a tagged day")
+    }
+
+    @Test
+    fun routineEngineUsesV2FloorInsteadOfItsOuterEightHourRule() {
+        val priors = ColdStartPriors(
+            center = FloatArray(9), scale = FloatArray(9) { 1f },
+            population = FloatArray(5), centroids = List(5) { FloatArray(9) },
+            archetypes = List(5) { FloatArray(5) }, pseudoDays = 3.0,
+        )
+        val hybrid = HybridPipeline(QuietModel(), priors, 0, HybridDecisionPolicy.V2)
+        val engine = RoutineEngine(
+            config = EngineConfig(), backbone = RhythmBackbones.profileOnly(),
+            prior = Array(3) { DoubleArray(96) { .2 } }, silencePrior = FloatArray(193) { 1f },
+            dowOffset = 0, installT = 0, hybrid = hybrid,
+        )
+        var atEightHours: TickResult? = null
+        var atTwelveHours: TickResult? = null
+        for (t in 0..75) {
+            val result = engine.onBin(BinObservation(t, 0, charging = false, battery = 80))
+            if (t == HybridPipeline.DAY_START + 31) atEightHours = result
+            if (t == HybridPipeline.DAY_START + 47) atTwelveHours = result
+        }
+        assertEquals(RoutineState.QUIET, atEightHours!!.decision.state,
+            "the outer eight-hour RuleBaseline floor must not override v2")
+        assertEquals(RoutineState.UNUSUAL_INACTIVITY, atTwelveHours!!.decision.state,
+            "the hybrid's twelve-hour continuous-observation floor must decide")
+    }
+
+    @Test
+    fun routineEngineSuppressesV2CallsForExplicitlyTaggedDays() {
+        val priors = ColdStartPriors(
+            center = FloatArray(9), scale = FloatArray(9) { 1f },
+            population = FloatArray(5), centroids = List(5) { FloatArray(9) },
+            archetypes = List(5) { FloatArray(5) }, pseudoDays = 3.0,
+        )
+        val engine = RoutineEngine(
+            config = EngineConfig(), backbone = RhythmBackbones.profileOnly(),
+            prior = Array(3) { DoubleArray(96) { .2 } }, silencePrior = FloatArray(193) { 1f },
+            dowOffset = 0, installT = 0,
+            hybrid = HybridPipeline(QuietModel(), priors, 0, HybridDecisionPolicy.V2),
+        )
+        engine.addLifeTag(LifeTag(0, Bins.PER_DAY, LifeTagKind.GUESTS))
+        val decisions = (0..75).map { t ->
+            engine.onBin(BinObservation(t, 0, charging = false, battery = 80)).decision
+        }
+        assertTrue(decisions.none { it.state == RoutineState.UNUSUAL_INACTIVITY },
+            "neither the model trigger nor the outer rule floor may alert on a tagged day")
     }
 }

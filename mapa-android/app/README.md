@@ -27,6 +27,17 @@ Two Android apps and a Firebase backend, built around the on-device rhythm model
 | `backend/` | `firestore.rules`, `functions/` (TypeScript), `rules-test/` (security rule tests). |
 | `tools/typecheck/` | Cloud-sandbox-only compile check against stubs. Not part of the app build. |
 
+## Current Hybrid decision policy (2026-11-02)
+
+The parent app's `ModelStore` now selects `rhythm_hybrid-v2-policy+cnn-cal1`. The trained 9,594-parameter neural checkpoint and its ExecuTorch programs are unchanged from v1. V2 changes the decision policy around those weights:
+
+- Use the personalized model score and threshold.
+- Keep a 12-hour continuous observed daytime-quiet backstop.
+- Suppress model and rule alerts on an explicitly tagged day.
+- Do not let the outer 8-hour `RuleBaseline` floor override v2.
+
+The v1 decision policy remains available in `HybridDecisionPolicy.V1` for reproduction. V2 results come from a derived-parent evaluation, not observed emergencies. The two highest false-alert scenarios remain `daytime_inactivity` and `phone_left_home`.
+
 ## What is shared, and what never leaves the phone
 
 | Leaves the phone (Firestore) | Stays on the phone |
@@ -99,14 +110,14 @@ Spark's Firestore quota is 20,000 writes a day. Each parent phone writes about 2
 free tier fits roughly 75-100 parents (estimate). Moving to Blaze later means deploying
 `backend/functions` for instant push; the in-app checks stay as a backup and alerts are de-duplicated.
 
-## Status
+## Status (2026-11-02)
 
-- Verified in the cloud sandbox: core unit tests (26/26), security rules (8/8 on the emulator),
-  Cloud Functions type-check, and every Android Kotlin file compiles against the Android 15 API,
-  Compose and hand-written stubs for Firebase, WorkManager, MediaPipe and AndroidX activity.
-- Not yet verified: a real Gradle/AGP build, running on a phone, MediaPipe with the real model file,
-  FCM delivery. The cloud sandbox can't download the Android SDK, so the first APK is built in
-  Android Studio. Expect a small fix or two there.
+- Verified: routine-engine Kotlin unit tests pass, including the v1/v2 floor boundary, v2 tag suppression,
+  and outer-rule integration. Parent Kotlin compilation and debug APK builds for both apps pass with the emulator backend.
+- The parent debug APK includes the v2 decision policy around the frozen neural checkpoint. The model package is published at
+  [MaPa-Rhythm-Base](https://huggingface.co/shreyashsharma/MaPa-Rhythm-Base).
+- Not measured: installation on a physical phone, v2 runtime latency, RAM, CPU or battery use.
+- These are debug APKs for demo/testing. They connect to the Firebase Emulator Suite and need it running for parent-family sync.
 
 ## Meta AI Developer Hackathon additions (2026-10-27)
 
