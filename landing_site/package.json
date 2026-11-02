@@ -13,6 +13,7 @@
     "deploy": "next build && modal deploy server/modal_app.py"
   },
   "dependencies": {
+    "@limrun/ui": "^0.16.0",
     "animejs": "^4.5.0",
     "marked": "^16.4.2",
     "next": "16.4.3",

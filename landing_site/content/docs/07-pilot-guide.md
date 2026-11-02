@@ -14,7 +14,7 @@ Both Android apps, the phone owner's and the family's, are built and compile tod
 
 1. Verify the apps on physical phones: Pixel 6a performance, battery use and current-policy parity.
 2. Complete family pairing and sync in a dedicated Firebase project, with authentication, access rules and deletion checked.
-3. Launch the browser demo for judges (see `09-judge-demo.md`). The page says plainly when an Appetize build or backend flow is not configured yet.
+3. Launch the browser demo for judges (see `09-judge-demo.md`). It starts a Limrun Android emulator only after a judge chooses an app, then releases it when the judge stops or leaves the session.
 
 ## Before a real pilot
 

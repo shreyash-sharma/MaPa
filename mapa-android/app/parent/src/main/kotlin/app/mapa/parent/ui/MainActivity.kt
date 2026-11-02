@@ -18,16 +18,20 @@ import app.mapa.core.pairing.InviteCodes
 import app.mapa.parent.Prefs
 import app.mapa.parent.collect.UsageProbe
 import app.mapa.shared.ui.MapaTheme
+import app.mapa.shared.ui.SampleDemoRole
+import app.mapa.shared.ui.SampleDemoScreen
 import java.util.Locale
 
 class MainActivity : ComponentActivity() {
     private var tts: TextToSpeech? = null
     private var ttsReady = false
+    private var demoMode by mutableStateOf(false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        tts = TextToSpeech(this) { ttsReady = it == TextToSpeech.SUCCESS }
+        demoMode = isSampleDemoIntent(intent)
+        if (!demoMode) tts = TextToSpeech(this) { ttsReady = it == TextToSpeech.SUCCESS }
         val prefs = Prefs(this)
         pendingCode = codeFrom(intent) ?: prefs.pendingCode
         prefs.pendingCode = pendingCode
@@ -41,6 +45,7 @@ class MainActivity : ComponentActivity() {
                     val text = remember(lang) { ParentText(lang) }
                     val setLang = { l: Lang -> lang = l; prefs.lang = l }
                     when {
+                        demoMode -> SampleDemoScreen(SampleDemoRole.PHONE_OWNER)
                         !consented && code.isBlank() -> NoInviteScreen(text, lang, setLang) { pendingCode = it; prefs.pendingCode = it }
                         !consented -> ConsentScreen(
                             text, code, lang, setLang, ::speak,
@@ -60,12 +65,18 @@ class MainActivity : ComponentActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
+        demoMode = isSampleDemoIntent(intent)
         codeFrom(intent)?.let { pendingCode = it; Prefs(this).pendingCode = it }
     }
 
     /** mapa://join/ABC234 or mapa://join/ABC-234 */
     private fun codeFrom(intent: Intent?): String? =
         intent?.data?.takeIf { it.scheme == "mapa" && it.host == "join" }?.lastPathSegment?.let { InviteCodes.normalize(it) }
+
+    private fun isSampleDemoIntent(intent: Intent?): Boolean =
+        app.mapa.parent.BuildConfig.DEBUG && intent?.data?.let {
+            it.scheme == "mapa" && it.host == "demo" && it.path == "/sample"
+        } == true
 
     /** Reads a screen aloud in the parent's language: the spoken walkthrough from the brief. */
     private fun speak(text: String, lang: Lang) {

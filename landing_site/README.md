@@ -1,12 +1,12 @@
 # MaPa landing site
 
-The public page for **MaPa**, built for the Meta AI Developer Hackathon. MaPa learns a parent's daily rhythm on their own
+The public page for **MaPa**, built for the Meta AI Developer Hackathon. MaPa learns a person's daily phone rhythm on their own
 Android phone and gives the family a calm daily note, or an alert when a morning is much quieter than usual. Only a
 conclusion ever leaves the parent's phone.
 
 Live homepage: https://shreyash-sharma--mapa-web-web.us-east.modal.run
 
-The deployed site includes a technical docs route (`/docs`) and an Appetize demo route (`/try`). The docs page is live. The demo page is live, but its app panels currently say that the demo is not available because no Appetize embed URLs are configured.
+The deployed site includes a technical docs route (`/docs`) and a Limrun demo route (`/try`). Visitors choose the parent or family app. A click starts one cloud Android emulator and streams it into the page with Limrun's `RemoteControl`; switching apps stops the previous emulator first. Both builds open a fictional sample screen and do not sign in or sync.
 
 The homepage animations and example screens are illustrative. The technical docs contain measured results from the v2
 Python policy simulation on 40 model-derived timelines, with the data limits and hard-negative results shown beside them.
@@ -33,10 +33,11 @@ npm run build          # static export to out/
 - `/docs/` is the technical documentation, rendered at build time from [`content/docs/`](content/docs) (the approved
   text; edit it there). Charts and the architecture diagram live in `public/docs/`. Tables become labelled cards on
   phones. The page list and figure captions are in [`src/lib/docs.ts`](src/lib/docs.ts).
-- `/try/` can stream the Android apps from Appetize after setup. Set `NEXT_PUBLIC_APPETIZE_PARENT_EMBED_URL` and
-  `NEXT_PUBLIC_APPETIZE_FAMILY_EMBED_URL` to the public embed links from each build's Share/Embed controls before
-  `npm run build`. Without them each panel says the demo is being prepared. Never put an Appetize API token or any
-  Firebase credential in a `NEXT_PUBLIC_*` variable.
+- `/try/` streams one Limrun Android emulator at a time. The Modal backend holds `LIM_API_KEY` and `MAPA_DEMO_ACCESS_CODE` in a `limrun-demo` secret. The judge access code is entered on the page and checked by the server; it is not shipped in the static site.
+  and uploads the two debug APKs to Limrun Asset Storage as `mapa-parent-demo.apk` and `mapa-family-demo.apk`. The
+  emulator has a 3-minute inactivity timeout and a 10-minute hard timeout; the page requests teardown when the visitor
+  stops or leaves. Only the per-instance stream token reaches the browser. The demo deep link opens a fixed fictional
+  screen in debug builds. It does not read phone activity or connect to Firebase.
 
 ## Languages
 

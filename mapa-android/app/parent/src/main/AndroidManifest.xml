@@ -41,6 +41,13 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="mapa" android:host="join" />
             </intent-filter>
+            <!-- The simulator demo deep link is handled only by debug builds. -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="mapa" android:host="demo" android:path="/sample" />
+            </intent-filter>
         </activity>
 
         <receiver

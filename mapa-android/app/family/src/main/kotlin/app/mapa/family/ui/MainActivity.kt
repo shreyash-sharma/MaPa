@@ -108,6 +108,8 @@ import app.mapa.shared.ui.GroupDivider
 import app.mapa.shared.ui.GroupRow
 import app.mapa.shared.ui.Mapa
 import app.mapa.shared.ui.MapaTheme
+import app.mapa.shared.ui.SampleDemoRole
+import app.mapa.shared.ui.SampleDemoScreen
 import app.mapa.shared.ui.ParentCardView
 import app.mapa.shared.ui.Eyebrow
 import app.mapa.shared.ui.PrimaryButton
@@ -125,8 +127,11 @@ import java.time.Instant
 import java.time.LocalDate
 
 class MainActivity : ComponentActivity() {
+    private var demoMode by mutableStateOf(false)
+
     override fun onNewIntent(intent: android.content.Intent) {
         super.onNewIntent(intent)
+        demoMode = isSampleDemoIntent(intent)
         intent.getStringExtra(app.mapa.family.Alerts.EXTRA_PID)?.let { openFromAlert.value = it }
     }
 
@@ -134,13 +139,21 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         intent?.getStringExtra(app.mapa.family.Alerts.EXTRA_PID)?.let { openFromAlert.value = it }
         enableEdgeToEdge()
+        demoMode = isSampleDemoIntent(intent)
         // Every screen applies safeDrawingPadding so headers stay clear of the status bar.
         setContent {
             MapaTheme(dark = debugTheme() ?: androidx.compose.foundation.isSystemInDarkTheme()) {
-                Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) { FamilyRoot() }
+                Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+                    if (demoMode) SampleDemoScreen(SampleDemoRole.FAMILY) else FamilyRoot()
+                }
             }
         }
     }
+
+    private fun isSampleDemoIntent(intent: android.content.Intent?): Boolean =
+        app.mapa.family.BuildConfig.DEBUG && intent?.data?.let {
+            it.scheme == "mapa" && it.host == "demo" && it.path == "/sample"
+        } == true
 }
 
 /** Parent to open because an alert was tapped. */

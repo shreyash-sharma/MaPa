@@ -21,6 +21,7 @@ from fastapi.staticfiles import StaticFiles
 from starlette.exceptions import HTTPException
 
 import i18n_core
+from limrun_demo import LimrunDemoSessions
 from stores import Store
 
 STARTS_PER_HOUR = int(os.environ.get("MAPA_STARTS_PER_HOUR", "4"))
@@ -109,6 +110,7 @@ def make_app(
     site_dir: Path | None = None,
     cors: list[str] | None = None,
     enabled: bool = True,
+    demo_sessions: LimrunDemoSessions | None = None,
 ) -> FastAPI:
     app = FastAPI(title="MaPa site", docs_url=None, redoc_url=None, openapi_url=None)
     app.add_middleware(GZipMiddleware, minimum_size=1000)
@@ -119,6 +121,35 @@ def make_app(
     @app.get("/api/health")
     def health() -> dict:
         return {"ok": True, "version": version, "strings": len(catalog["strings"]), "model": i18n_core.MODEL, "live_translation": enabled}
+
+    @app.post("/api/demo/start")
+    async def start_demo(request: Request) -> dict:
+        if demo_sessions is None:
+            return JSONResponse({"error": "The cloud demo is not configured yet."}, status_code=503)
+        try:
+            body = await request.json()
+        except Exception:
+            return JSONResponse({"error": "Invalid demo request."}, status_code=400)
+        role = body.get("role") if isinstance(body, dict) else None
+        owner = body.get("owner") if isinstance(body, dict) else None
+        access_code = body.get("accessCode") if isinstance(body, dict) else None
+        if not isinstance(role, str) or not isinstance(owner, str) or not isinstance(access_code, str):
+            return JSONResponse({"error": "Invalid demo request."}, status_code=400)
+        return await demo_sessions.start(request, role, owner, access_code)
+
+    @app.post("/api/demo/stop")
+    async def stop_demo(request: Request) -> dict:
+        if demo_sessions is None:
+            return {"ok": True}
+        try:
+            body = await request.json()
+        except Exception:
+            return JSONResponse({"error": "Invalid stop request."}, status_code=400)
+        instance_id = body.get("id") if isinstance(body, dict) else None
+        session_key = body.get("sessionKey") if isinstance(body, dict) else None
+        if not isinstance(instance_id, str) or not isinstance(session_key, str):
+            return JSONResponse({"error": "Invalid stop request."}, status_code=400)
+        return await demo_sessions.stop(request, instance_id, session_key)
 
     @app.get("/api/i18n/{lang}")
     def translation(lang: str, request: Request) -> JSONResponse:
