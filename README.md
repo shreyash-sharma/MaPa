@@ -137,11 +137,9 @@ Without a `google-services.json` the apps use the local Firebase Emulator Suite 
 
 </details>
 
-## Why we built it
+## Motivation
 
-> I live away from my parents, and like many adult children, I often wonder how their day is going. Calling them repeatedly isn't practical, and I don't want to make them feel monitored through cameras, GPS trackers or wearables. What I really want is a simple way to know whether their everyday routine seems normal. MaPa uses the smartphone they already carry to learn their activity patterns and identify unusual periods of inactivity. With their consent, it helps families know when a gentle check-in might be worthwhile, without compromising their privacy or independence.
->
-> — Shreyash Sharma, founder
+MaPa explores a low-friction daily check-in for families who live apart. It uses opt-in phone-use timing to summarize routine patterns without collecting app names, location, camera, or microphone data.
 
 <details>
 <summary><b>Repository map</b></summary>
