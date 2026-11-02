@@ -32,7 +32,7 @@ export default function TryPage() {
         <div className="hairline-b flex items-center justify-between gap-3 px-5 py-2 font-mono text-xs tracking-wide text-ink-faint lg:px-16">
           <span className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-terracotta" />Live app demo</span>
           <span className="hidden sm:block">Two Android emulators · Hosted by Limrun</span>
-          <span>Example data</span>
+          <span>No account needed</span>
         </div>
 
         <div className="mx-auto max-w-[1680px] px-5 pb-20 pt-8 sm:pt-10 lg:px-10">
