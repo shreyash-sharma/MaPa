@@ -1,7 +1,7 @@
 "use client";
 
 import { RemoteControl, type RemoteControlConnectionState } from "@limrun/ui";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type DemoApp = { id: "parent" | "family"; name: string; role: string; steps: string[] };
 type DemoSession = { id: string; role: DemoApp["id"]; endpointWebSocketUrl: string; token: string; sessionKey: string };
@@ -19,6 +19,7 @@ export function DemoPlayers({ apps }: { apps: DemoApp[] }) {
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
   const [connections, setConnections] = useState<DemoConnections>({});
+  const appGridRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!Object.keys(sessions).length) return;
@@ -51,6 +52,7 @@ export function DemoPlayers({ apps }: { apps: DemoApp[] }) {
     const errors = outcomes.flatMap((result, index) => result.status === "rejected" ? [`${targets[index].name}: ${result.reason instanceof Error ? result.reason.message : "Could not start."}`] : []);
     setMessage(errors.length ? `${done.join(" and ")} ${done.length === 1 ? "is" : "are"} running. ${errors.join(" ")}` : `${done.join(" and ")} running side by side.`);
     setBusy(false);
+    requestAnimationFrame(() => appGridRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }));
   }
 
   async function toggleApp(app: DemoApp) {
@@ -80,7 +82,7 @@ export function DemoPlayers({ apps }: { apps: DemoApp[] }) {
         </div>
         {message && <p role="status" aria-live="polite" className="mb-4 rounded-xl bg-white/70 px-4 py-3 text-sm text-terracotta-ink">{message}</p>}
 
-        <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+        <div ref={appGridRef} className="scroll-mt-6 grid grid-cols-1 gap-5 lg:grid-cols-2">
           {apps.map((app) => {
             const session = sessions[app.id];
             const active = Boolean(session);
@@ -90,7 +92,7 @@ export function DemoPlayers({ apps }: { apps: DemoApp[] }) {
                 <div><h2 id={`${app.id}-title`} className="font-display text-2xl text-ink">{app.name}</h2><p className="text-sm text-ink-muted">{app.role}</p></div>
                 <span className={`rounded-full px-3 py-1 text-xs ${active ? "bg-green-100 text-green-900" : "border border-line-strong/60 bg-white/70 text-ink-muted"}`}>{active ? connection === "connected" ? "Live" : "Starting" : "Ready to launch"}</span>
               </div>
-              <div className="mx-auto flex aspect-[9/17] w-full max-w-[340px] items-center justify-center overflow-hidden rounded-[2rem] border border-line-strong bg-ink shadow-xl">
+              <div className="mx-auto flex aspect-[9/17] w-full max-w-[400px] items-center justify-center overflow-hidden rounded-[2rem] border border-line-strong bg-ink shadow-xl">
                 {active && session ? <RemoteControl url={session.endpointWebSocketUrl} token={session.token} sessionId={session.id} openUrl="mapa://demo/sample" className="h-full w-full" onConnectionStateChange={(state) => setConnections((current) => ({ ...current, [app.id]: state }))} onTerminated={() => { setSessions((current) => { const next = { ...current }; delete next[app.id]; return next; }); setMessage(`${app.name} emulator ended. You can start it again.`); }} /> :
                   <div className="flex h-full w-full flex-col items-center justify-center gap-3 bg-[radial-gradient(ellipse_at_top,#45413d,#171615_64%)] p-8 text-center text-white"><span className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/60">Limrun · Android</span><span className="font-display text-3xl">{app.name}</span><span className="text-sm text-white/70">Start the app to open it live.</span></div>}
               </div>

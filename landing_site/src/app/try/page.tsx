@@ -35,11 +35,11 @@ export default function TryPage() {
           <span>Example data</span>
         </div>
 
-        <div className="mx-auto max-w-[1440px] px-5 pb-20 pt-8 sm:pt-10 lg:px-12">
+        <div className="mx-auto max-w-[1680px] px-5 pb-20 pt-8 sm:pt-10 lg:px-10">
           <header className="mb-7 flex flex-col gap-5 border-b border-line-strong/60 pb-7 md:flex-row md:items-end md:justify-between">
             <div className="max-w-2xl">
               <p className="font-mono text-xs uppercase tracking-[0.16em] text-terracotta-ink">MaPa · live demo</p>
-              <h1 className="mt-2 font-display text-4xl leading-[1.05] text-ink sm:text-5xl">See both sides of MaPa.</h1>
+              <h1 className="mt-2 font-display text-4xl leading-[1.05] text-ink sm:text-5xl">Try both Android apps <span className="italic text-terracotta-ink">live.</span></h1>
               <p className="mt-3 max-w-xl text-base leading-relaxed text-ink-muted">Two real Android app builds, running side by side in cloud emulators. Start both to compare the parent and family experience.</p>
             </div>
             <div className="flex flex-wrap gap-x-5 gap-y-2 text-sm">
