@@ -4,10 +4,13 @@ The public page for **MaPa**, built for the Meta AI Developer Hackathon. MaPa le
 Android phone and gives the family a calm daily note, or an alert when a morning is much quieter than usual. Only a
 conclusion ever leaves the parent's phone.
 
-Live: https://shreyash-sharma--mapa-web-web.us-east.modal.run
+Live homepage: https://shreyash-sharma--mapa-web-web.us-east.modal.run
 
-Everything shown on the page (the dial, the phones, the notes, the numbers labelled "simulated") is illustrative. MaPa is
-not a medical or emergency service.
+The deployed site includes a technical docs route (`/docs`) and an Appetize demo route (`/try`). The docs page is live. The demo page is live, but its app panels currently say that the demo is not available because no Appetize embed URLs are configured.
+
+The homepage animations and example screens are illustrative. The technical docs contain measured results from the v2
+Python policy simulation on 40 model-derived timelines, with the data limits and hard-negative results shown beside them.
+Those results do not establish real-world event detection or emergency detection. MaPa is not a medical or emergency service.
 
 ## Stack
 
@@ -24,6 +27,16 @@ npm run dev            # http://localhost:3000
 npm run lint
 npm run build          # static export to out/
 ```
+
+## Docs and demo
+
+- `/docs/` is the technical documentation, rendered at build time from [`content/docs/`](content/docs) (the approved
+  text; edit it there). Charts and the architecture diagram live in `public/docs/`. Tables become labelled cards on
+  phones. The page list and figure captions are in [`src/lib/docs.ts`](src/lib/docs.ts).
+- `/try/` can stream the Android apps from Appetize after setup. Set `NEXT_PUBLIC_APPETIZE_PARENT_EMBED_URL` and
+  `NEXT_PUBLIC_APPETIZE_FAMILY_EMBED_URL` to the public embed links from each build's Share/Embed controls before
+  `npm run build`. Without them each panel says the demo is being prepared. Never put an Appetize API token or any
+  Firebase credential in a `NEXT_PUBLIC_*` variable.
 
 ## Languages
 

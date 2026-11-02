@@ -16,6 +16,7 @@ from typing import Any, Protocol
 
 class Store(Protocol):
     def get(self, version: str, lang: str) -> dict | None: ...
+    def previous(self, version: str, lang: str) -> dict | None: ...
     def put(self, version: str, lang: str, data: dict) -> None: ...
     def lock(self, version: str, lang: str) -> bool: ...
     def unlock(self, version: str, lang: str) -> None: ...
@@ -27,6 +28,12 @@ class Store(Protocol):
 
 
 LOCK_TTL = 30 * 60
+
+
+def _newest_other(root: Path, version: str, lang: str) -> dict | None:
+    """The most recent translation of this language made for an earlier version of the English copy."""
+    found = sorted((p for p in root.glob(f"*/{lang}.json") if p.parent.name != version), key=lambda p: p.stat().st_mtime)
+    return json.loads(found[-1].read_text(encoding="utf-8")) if found else None
 
 
 def _hour() -> str:
@@ -109,6 +116,9 @@ class LocalStore(_Counters):
         path = self.root / version / f"{lang}.json"
         return json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
 
+    def previous(self, version: str, lang: str) -> dict | None:
+        return _newest_other(self.root, version, lang)
+
     def put(self, version: str, lang: str, data: dict) -> None:
         path = self.root / version / f"{lang}.json"
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -133,6 +143,10 @@ class ModalStore(_Counters):
             # Another container may have just written it.
             self.volume.reload()
         return json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
+
+    def previous(self, version: str, lang: str) -> dict | None:
+        self.volume.reload()
+        return _newest_other(self.mount, version, lang)
 
     def put(self, version: str, lang: str, data: dict) -> None:
         path = self.mount / version / f"{lang}.json"

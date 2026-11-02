@@ -18,6 +18,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
+from starlette.exceptions import HTTPException
 
 import i18n_core
 from stores import Store
@@ -27,15 +28,40 @@ STARTS_PER_HOUR = int(os.environ.get("MAPA_STARTS_PER_HOUR", "4"))
 MONTHLY_TOKENS = int(os.environ.get("MAPA_MONTHLY_TOKENS", "200000"))
 
 
+def _segment_file(path: str) -> str | None:
+    """Next.js prefetches `docs/__next.docs.__PAGE__.txt` but exports it as `docs/__next.docs/__PAGE__.txt`."""
+    head, _, name = path.replace("\\", "/").rpartition("/")
+    if not (name.startswith("__next.") and name.endswith(".txt")):
+        return None
+    parts = name[len("__next.") : -len(".txt")].split(".")
+    if len(parts) < 2:
+        return None
+    rel = "/".join([f"__next.{parts[0]}", *parts[1:-1], f"{parts[-1]}.txt"])
+    return f"{head}/{rel}" if head else rel
+
+
 class SiteFiles(StaticFiles):
     """The static export. Next.js puts a content hash in every /_next/static name, so those can be kept for a year."""
 
     async def get_response(self, path, scope):
-        response = await super().get_response(path, scope)
-        if path.startswith("_next/static/"):
+        mapped = _segment_file(path)
+        try:
+            response = await super().get_response(path, scope)
+        except HTTPException as error:
+            # Without a 404.html, a missing file raises instead of returning the not-found page.
+            if error.status_code != 404 or not mapped:
+                raise
+            return await super().get_response(mapped, scope)
+        if response.status_code == 404 and mapped:
+            return await super().get_response(mapped, scope)
+        if path.replace("\\", "/").startswith("_next/static/"):
             response.headers["Cache-Control"] = "public, max-age=31536000, immutable"
         elif path.endswith((".png", ".jpg", ".svg", ".woff2")):
             response.headers["Cache-Control"] = "public, max-age=86400"
+        else:
+            # Pages, prefetch data and translations change on every deploy; the files carry a 1970 timestamp on Modal,
+            # so without this browsers would guess they can keep them for years.
+            response.headers["Cache-Control"] = "no-cache"
         return response
 
 
@@ -47,9 +73,17 @@ def run_job(store: Store, catalog: dict, lang: str, call: i18n_core.Call) -> dic
     """Translate the whole catalog into one language and keep the result. Always releases the lock."""
     version = catalog["version"]
     try:
-        strings, stats = i18n_core.translate_catalog(
-            catalog["strings"], lang, call, on_progress=lambda done, total: store.set_progress(version, lang, done, total)
-        )
+        # A string's id is a hash of its English text, so a translation made for an earlier copy is still right
+        # for every string that has not changed. Only the new or edited strings go to the model.
+        before = (store.previous(version, lang) or {}).get("strings", {})
+        kept = {k: before[k] for k in catalog["strings"] if k in before}
+        todo = {k: v for k, v in catalog["strings"].items() if k not in kept}
+        total = len(catalog["strings"])
+        fresh, stats = i18n_core.translate_catalog(
+            todo, lang, call, on_progress=lambda done, _: store.set_progress(version, lang, len(kept) + done, total)
+        ) if todo else ({}, {"tokens": 0, "translated": 0, "total": 0})
+        strings = {**kept, **fresh}
+        stats = {**stats, "reused": len(kept), "translated": len(strings), "total": total}
         data = {
             "version": version,
             "lang": lang,

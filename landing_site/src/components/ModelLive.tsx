@@ -22,7 +22,7 @@ function arc(r: number, m0: number, m1: number) {
   return `M ${x0} ${y0} A ${r} ${r} 0 ${large} 1 ${x1} ${y1}`;
 }
 
-/** Mummy's Thursday rhythm: hour of day → chance of a sign of life, linearly interpolated. */
+/** a parent's Thursday rhythm: hour of day → chance of a sign of life, linearly interpolated. */
 const KEYS: [number, number][] = [
   [0, 0.04], [5, 0.05], [6, 0.12], [6.75, 0.35], [7.5, 0.72], [8, 0.8], [10.5, 0.74], [11, 0.44],
   [12.75, 0.4], [13.25, 0.52], [13.6, 0.14], [15.5, 0.12], [16, 0.46], [18, 0.56], [19, 0.66],
@@ -63,7 +63,7 @@ const STATES = [
   { name: "Paused by parent", tag: "Their choice", body: "Your parent paused sharing. The family sees that, never a guess.", foot: "Dignity intact", dot: "border border-dashed border-ink-faint" },
 ];
 
-/** The face inside the dial: a sky that turns with Mummy's day. The moon or sun sits at "now". Decorative, not sensed. */
+/** The face inside the dial: a sky that turns with a parent's day. The moon or sun sits at "now". Decorative, not sensed. */
 const FACE_R = 170;
 const ORBIT_R = 112;
 const deg = (min: number) => (min / 1440) * 360;
@@ -100,18 +100,18 @@ const CHAPTERS = [
   {
     key: "model",
     short: "The model",
-    tag: "The model · on Mummy’s phone",
+    tag: "The model · on your parent’s phone",
     title: "One small model learns the shape of one parent’s day.",
-    body: "Every 15 minutes it reads 18 numbers: phone used or not, how often, movement, time of day, charging, battery. Trained on 21 of Mummy’s days, it runs on her phone in 123 µs a step. Only conclusions leave it.",
+    body: "Every 15 minutes it reads 21 inputs: phone-use timing, session starts and a few device signals. Trained on 21 of their days, it runs on their phone. Only conclusions leave it.",
     big: "21",
-    small: "of Mummy’s days learned",
+    small: "of their days learned",
   },
   {
     key: "forecast",
     short: "Forecast",
     tag: "Thursday · 9:15 AM · Forecast",
-    title: "Today matches Mummy’s Thursday rhythm.",
-    body: "Forecast: her usual busy stretch runs until 11 AM. A quiet gap after lunch is normal for her.",
+    title: "Today matches their Thursday rhythm.",
+    body: "Forecast: their usual busy stretch runs until 11 AM. A quiet gap after lunch is normal for them.",
     foot: "Updated 3 minutes ago",
     big: "9:15",
     small: "now · next 4 hours forecast",
@@ -120,17 +120,17 @@ const CHAPTERS = [
     key: "drift",
     short: "Drift",
     tag: "Another Thursday · 9:15 AM · Drift",
-    title: "Mummy’s Thursday mornings usually start by 7:45. Today hasn’t started. It’s 9:15.",
-    body: "A fixed 24-hour timer would still be waiting. MaPa knows within hours, because it knows her morning.",
+    title: "Their Thursday mornings usually start by 7:45. Today hasn’t started. It’s 9:15.",
+    body: "A fixed 24-hour timer would still be waiting. MaPa knows within hours, because it knows their morning.",
     big: "1 h 30",
-    small: "past her usual start",
+    small: "past their usual start",
   },
   {
     key: "learn",
     short: "Learns carefully",
     tag: "Three weeks later · Learns carefully",
-    title: "Mummy’s mornings have moved 40 minutes later over 3 weeks.",
-    body: "Is this her new routine? MaPa asks you before it learns it. Days tagged unwell or travelling never become “normal”.",
+    title: "Their mornings have moved 40 minutes later over 3 weeks.",
+    body: "Is this their new routine? MaPa asks you before it learns it. Days tagged unwell or travelling never become “normal”.",
     big: "+40",
     small: "minutes, over three weeks",
   },
@@ -261,7 +261,7 @@ export function ModelLive() {
         .add($(".ml-sun, .ml-sunlight, .ml-clouds"), { opacity: [0, 1], duration: 110 }, passes(345))
         .add(rays, { draw: ["0 0", "0 1"], duration: 90, delay: stagger(6) }, passes(420));
 
-      // III · Drift: today empties, her usual start glows, MaPa's arc beats the 24-hour timer.
+      // III · Drift: today empties, their usual start glows, MaPa's arc beats the 24-hour timer.
       const d = start(2);
       tl.add($(".ml-tick-today"), { opacity: [1, 0], duration: 120, delay: stagger(1.5, { from: "last" }) }, d + 20)
         .add($(".ml-hot"), { opacity: [0, 1], duration: 110 }, d + 140)
@@ -319,7 +319,7 @@ export function ModelLive() {
   }, [answer, reduced]);
 
   const dial = (
-    <svg viewBox="-40 -30 680 660" className="block h-full w-full overflow-visible" role="img" aria-label="A 24-hour dial of Mummy’s usual day, drawn from her learned rhythm">
+    <svg viewBox="-40 -30 680 660" className="block h-full w-full overflow-visible" role="img" aria-label="A 24-hour dial of a parent’s usual day, drawn from their learned rhythm">
       <defs>
         <radialGradient id="mlGlow" cx="50%" cy="50%" r="50%">
           <stop offset="0%" stopColor="#fe8357" stopOpacity="0.9" />
@@ -466,7 +466,7 @@ export function ModelLive() {
       <path className="ml-fc-arc" d={arc(R0 - 14, NOW, NOW + 240)} fill="none" stroke="#e07a5f" strokeWidth="3" strokeLinecap="round" />
       {[
         { m: 10 * 60 + 15, text: "Busy until 11 AM", dx: 1 },
-        { m: 14 * 60 + 30, text: "Quiet after lunch · normal for her", dx: -1 },
+        { m: 14 * 60 + 30, text: "Quiet after lunch · normal for them", dx: -1 },
       ].map(({ m, text, dx }) => {
         const [x0, y0] = pt(m, R0 + TICK + 30);
         const [x1, y1] = pt(m, 318);
@@ -533,7 +533,7 @@ export function ModelLive() {
 
       {/* Phones cannot fit the heading beside the dial, so it scrolls above the pinned stage there. */}
       <div className="mx-auto max-w-7xl px-5 pt-14 pb-2 md:hidden">
-        <p className="ml-intro mb-2 font-mono text-xs tracking-wide text-terracotta-ink">A 5,360-parameter model</p>
+        <p className="ml-intro mb-2 font-mono text-xs tracking-wide text-terracotta-ink">A 9,594-parameter model</p>
         <h2 className="ml-intro font-display text-5xl font-normal leading-[1.02]">
           Learning one parent’s day, <span className="italic text-terracotta-ink">quietly, on their phone.</span>
         </h2>
@@ -542,7 +542,7 @@ export function ModelLive() {
       <div ref={track} className={reduced ? "" : "h-[420vh]"}>
       <div className={`${reduced ? "" : "sticky top-[56px] h-[calc(100svh-56px)]"} flex flex-col overflow-hidden`}>
         <div className="mx-auto hidden w-full max-w-7xl shrink-0 px-5 pt-6 md:block lg:px-16">
-          <p className="ml-intro mb-1.5 font-mono text-xs tracking-wide text-terracotta-ink">A 5,360-parameter model</p>
+          <p className="ml-intro mb-1.5 font-mono text-xs tracking-wide text-terracotta-ink">A 9,594-parameter model</p>
           <h2 className="ml-intro font-display text-4xl leading-[1.05] font-normal text-ink lg:text-5xl">
             Learning one parent’s day, <span className="italic text-terracotta-ink">quietly, on their phone.</span>
           </h2>
@@ -577,9 +577,9 @@ export function ModelLive() {
                   )}
                   {c.key === "learn" && (
                     <div className="mt-4 space-y-2">
-                      <div role="group" aria-label="Is this Mummy’s new routine?" className="flex flex-wrap gap-3">
+                      <div role="group" aria-label="Is this their new routine?" className="flex flex-wrap gap-3">
                         {([
-                          ["yes", "Yes, it’s her new routine"],
+                          ["yes", "Yes, it’s their new routine"],
                           ["not-yet", "Not yet"],
                         ] as const).map(([value, text]) => (
                           <button
@@ -597,7 +597,7 @@ export function ModelLive() {
                       </div>
                       <p aria-live="polite" className="ml-reply min-h-6 text-base text-ink-muted">
                         {answer === "yes" && "Got it. MaPa will learn the later mornings, a small, bounded step at a time."}
-                        {answer === "not-yet" && "Okay. MaPa keeps her usual rhythm and will ask again if the change holds."}
+                        {answer === "not-yet" && "Okay. MaPa keeps their usual rhythm and will ask again if the change holds."}
                       </p>
                     </div>
                   )}

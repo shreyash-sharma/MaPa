@@ -2,6 +2,7 @@
 
 import { animate, createScope, createTimeline, onScroll, splitText, stagger, utils, type Scope, type Timeline } from "animejs";
 import Image from "next/image";
+import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { prefersReducedMotion, showInstantly } from "@/lib/motion";
 
@@ -11,7 +12,6 @@ type Mark = {
   label: string;
   code: string;
   lang: string;
-  cities: string;
   font: string;
   size: string;
   /** Line height that holds this script's tallest and deepest glyphs. */
@@ -20,16 +20,16 @@ type Mark = {
 };
 
 const MARKS: Mark[] = [
-  { parts: ["M", "a", "P", "a"], label: "English", code: "", lang: "English", cities: "Lucknow ↔ London", font: "font-display", size: "text-[88px] sm:text-[128px] md:text-[160px]", leading: "leading-[1.08]" },
-  { parts: ["माँ", "-", "पापा"], label: "माँ-पापा", code: "HI", lang: "Hindi", cities: "Lucknow ↔ Delhi", font: "font-deva", size: "text-[56px] sm:text-[84px] md:text-[106px]", leading: "leading-[1.3]" },
-  { parts: ["அம்மா", "-", "அப்பா"], label: "அம்மா-அப்பா", code: "TA", lang: "Tamil", cities: "Chennai ↔ Singapore", font: "font-tamil", size: "text-[40px] sm:text-[62px] md:text-[80px] lg:text-[92px]", leading: "leading-[1.3]" },
-  { parts: ["అమ్మ", "-", "నాన్న"], label: "అమ్మ-నాన్న", code: "TE", lang: "Telugu", cities: "Hyderabad ↔ Dallas", font: "font-telugu", size: "text-[46px] sm:text-[72px] md:text-[92px]", leading: "leading-[1.35]" },
-  { parts: ["মা", "-", "বাবা"], label: "মা-বাবা", code: "BN", lang: "Bengali", cities: "Kolkata ↔ New York", font: "font-bengali", size: "text-[54px] sm:text-[82px] md:text-[104px]", leading: "leading-[1.3]" },
-  { parts: ["आई", "-", "बाबा"], label: "आई-बाबा", code: "MR", lang: "Marathi", cities: "Pune ↔ Bengaluru", font: "font-deva", size: "text-[56px] sm:text-[84px] md:text-[106px]", leading: "leading-[1.3]" },
-  { parts: ["ماں", "-", "باپ"], label: "ماں-باپ", code: "UR", lang: "Urdu", cities: "Lucknow ↔ Dubai", font: "font-urdu", size: "text-[40px] sm:text-[60px] md:text-[74px]", leading: "leading-[2.2]", dir: "rtl" },
-  { parts: ["Maman", " & ", "Papa"], label: "Maman & Papa", code: "FR", lang: "French", cities: "Pondicherry ↔ Paris", font: "font-display", size: "text-[64px] sm:text-[96px] md:text-[128px]", leading: "leading-[1.12]" },
-  { parts: ["お母さん", "・", "お父さん"], label: "お母さん・お父さん", code: "JA", lang: "Japanese", cities: "Tokyo ↔ San Francisco", font: "font-jp", size: "text-[36px] sm:text-[60px] md:text-[80px]", leading: "leading-[1.15]" },
-  { parts: ["엄마", "・", "아빠"], label: "엄마・아빠", code: "KO", lang: "Korean", cities: "Seoul ↔ Vancouver", font: "font-kr", size: "text-[50px] sm:text-[78px] md:text-[100px]", leading: "leading-[1.15]" },
+  { parts: ["M", "a", "P", "a"], label: "English", code: "", lang: "English", font: "font-display", size: "text-[88px] sm:text-[128px] md:text-[160px]", leading: "leading-[1.08]" },
+  { parts: ["माँ", "-", "पापा"], label: "माँ-पापा", code: "HI", lang: "Hindi", font: "font-deva", size: "text-[56px] sm:text-[84px] md:text-[106px]", leading: "leading-[1.3]" },
+  { parts: ["அம்மா", "-", "அப்பா"], label: "அம்மா-அப்பா", code: "TA", lang: "Tamil", font: "font-tamil", size: "text-[40px] sm:text-[62px] md:text-[80px] lg:text-[92px]", leading: "leading-[1.3]" },
+  { parts: ["అమ్మ", "-", "నాన్న"], label: "అమ్మ-నాన్న", code: "TE", lang: "Telugu", font: "font-telugu", size: "text-[46px] sm:text-[72px] md:text-[92px]", leading: "leading-[1.35]" },
+  { parts: ["মা", "-", "বাবা"], label: "মা-বাবা", code: "BN", lang: "Bengali", font: "font-bengali", size: "text-[54px] sm:text-[82px] md:text-[104px]", leading: "leading-[1.3]" },
+  { parts: ["आई", "-", "बाबा"], label: "आई-बाबा", code: "MR", lang: "Marathi", font: "font-deva", size: "text-[56px] sm:text-[84px] md:text-[106px]", leading: "leading-[1.3]" },
+  { parts: ["ماں", "-", "باپ"], label: "ماں-باپ", code: "UR", lang: "Urdu", font: "font-urdu", size: "text-[40px] sm:text-[60px] md:text-[74px]", leading: "leading-[2.2]", dir: "rtl" },
+  { parts: ["Maman", " & ", "Papa"], label: "Maman & Papa", code: "FR", lang: "French", font: "font-display", size: "text-[64px] sm:text-[96px] md:text-[128px]", leading: "leading-[1.12]" },
+  { parts: ["お母さん", "・", "お父さん"], label: "お母さん・お父さん", code: "JA", lang: "Japanese", font: "font-jp", size: "text-[36px] sm:text-[60px] md:text-[80px]", leading: "leading-[1.15]" },
+  { parts: ["엄마", "・", "아빠"], label: "엄마・아빠", code: "KO", lang: "Korean", font: "font-kr", size: "text-[50px] sm:text-[78px] md:text-[100px]", leading: "leading-[1.15]" },
 ];
 
 const CYCLE_MS = 7000;
@@ -280,8 +280,6 @@ export function Hero() {
                 </p>
                 <p className="mark-meta mt-3 flex items-center gap-2 font-mono text-[14px] tracking-wide text-ink-faint sm:text-xs">
                   <span>{mark.lang}</span>
-                  <span className="text-terracotta">·</span>
-                  <span className="font-medium text-terracotta-ink">{mark.cities}</span>
                 </p>
               </div>
             ))}
@@ -336,8 +334,8 @@ export function Hero() {
             Know their day began as usual, <span className="italic font-normal text-terracotta-ink">without ever asking.</span>
           </h2>
           <p data-hero className="hero-fade mx-auto mt-4 max-w-xl font-serif text-lg leading-relaxed font-light text-ink-muted">
-            Mummy usually picks up her phone by 06:40 in Lucknow. By the time you wake in London, you can see her morning began as
-            usual — not because anyone watched her, but because her phone quietly came to life.
+            Your parent usually picks up their phone by 7:40. Hours later and miles away, you can see their morning began as usual —
+            not because anyone watched them, but because their phone quietly came to life.
           </p>
 
           <div data-hero className="hero-fade mt-7 flex flex-col items-center justify-center gap-4 sm:flex-row">
@@ -351,6 +349,9 @@ export function Hero() {
             <a href="#model-live" className="inline-flex min-h-11 items-center gap-1.5 px-4 text-base text-ink-muted transition-colors hover:text-ink">
               Watch it learn, live <span aria-hidden>↓</span>
             </a>
+            <Link href="/docs/" className="inline-flex min-h-11 items-center gap-1.5 px-4 text-base text-terracotta-ink transition-colors hover:text-ink">
+              Read the technical docs <span aria-hidden>→</span>
+            </Link>
           </div>
 
           <div data-hero className="hero-fade mt-12 w-full max-w-xl hairline-t hairline-b py-3.5 font-mono text-[14px] text-ink-muted">
@@ -360,7 +361,7 @@ export function Hero() {
                 Zero cameras
               </li>
               <li className="flex items-center justify-center">Learns on-device</li>
-              <li className="flex items-center justify-center">50 KB model</li>
+              <li className="flex items-center justify-center">9,594 parameters</li>
             </ul>
           </div>
         </div>

@@ -5,12 +5,12 @@ import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { prefersReducedMotion } from "@/lib/motion";
 import { translateText } from "@/i18n/runtime";
 
-/* MaPa learning inside Mummy's phone: 21 simulated days, then one quiet morning, on a loop.
-   Every series and note here is illustrative. What leaves her phone is a short note, never her data. */
+/* MaPa learning inside the parent's phone: 21 simulated days, then one quiet morning, on a loop.
+   Every series and note here is illustrative. What leaves their phone is a short note, never their data. */
 
 const round2 = (v: number) => Math.round(v * 100) / 100;
 
-/** Mummy's usual chance of a sign of life by hour. */
+/** the parent's usual chance of a sign of life by hour. */
 const KEYS: [number, number][] = [
   [0, 0.04], [5, 0.05], [6, 0.12], [6.75, 0.35], [7.5, 0.72], [8, 0.8], [10.5, 0.74], [11, 0.44],
   [12.75, 0.4], [13.25, 0.52], [13.6, 0.14], [15.5, 0.12], [16, 0.46], [18, 0.56], [19, 0.66],
@@ -41,10 +41,10 @@ const clock = (min: number) => {
   const h = Math.floor(m / 60);
   return `${h % 12 || 12}:${pad(m % 60)} ${h < 12 ? "AM" : "PM"}`;
 };
-/** London is 5 h 30 behind Lucknow in late October. */
+/** The family's phone is a few time zones away, so notes and alerts land at a different hour there. */
 const LONDON = -330;
 
-// ---------- Mummy's phone ----------
+// ---------- the parent's phone ----------
 const STEPS = 32;
 const LAYERS = 6;
 const NOW = STEPS - 1;
@@ -134,10 +134,10 @@ const PLAN = Array.from({ length: DAYS }, (_, d) => {
   return { ms: story ? 5200 : d < CONFIDENT_DAY ? 1500 : 1300, story };
 });
 const noteFor = (d: number): Note => {
-  if (d === TRAVEL_DAY) return { state: "Active", text: "Travelling today, as you tagged it. This day won’t count as her normal." };
-  if (d < 3) return { state: "Active", text: "Phone in use this morning. MaPa is still learning what is usual for her." };
-  if (d < CONFIDENT_DAY) return { state: "Active", text: `Morning began around 7:${30 + (d % 6)}. Getting to know what is usual for her.` };
-  return { state: "Active", text: "Morning began as usual at 7:32. Busy until about 11, then a quiet gap after lunch, normal for her." };
+  if (d === TRAVEL_DAY) return { state: "Active", text: "Travelling today, as you tagged it. This day won’t count as their normal." };
+  if (d < 3) return { state: "Active", text: "Phone in use this morning. MaPa is still learning what is usual for them." };
+  if (d < CONFIDENT_DAY) return { state: "Active", text: `Morning began around 7:${30 + (d % 6)}. Getting to know what is usual for them.` };
+  return { state: "Active", text: "Morning began as usual at 7:32. Busy until about 11, then a quiet gap after lunch, normal for them." };
 };
 
 /** The live part: one quiet morning, a quarter-hour at a time, told the way the family would hear it. */
@@ -148,8 +148,8 @@ const LIVE: { min: number; ms: number; status?: string; note?: Note }[] = [
   {
     min: 7 * 60 + 45,
     ms: 6200,
-    status: "A little late · within her range, no alert",
-    note: { state: "Quiet", text: "A little later than her usual 7:40, still within her normal range. No alert, nothing to do." },
+    status: "A little late · within their range, no alert",
+    note: { state: "Quiet", text: "A little later than their usual 7:40, still within their normal range. No alert, nothing to do." },
   },
   { min: 8 * 60, ms: 1400 },
   { min: 8 * 60 + 15, ms: 1400 },
@@ -160,13 +160,13 @@ const LIVE: { min: number; ms: number; status?: string; note?: Note }[] = [
     min: 9 * 60 + 15,
     ms: 8600,
     status: "Much quieter than usual · alerting the family",
-    note: { state: "Unusual", kind: "alert", text: "Mummy usually picks up her phone by 7:40. It’s 9:15. Maybe a good time to call." },
+    note: { state: "Unusual", kind: "alert", text: "Your parent usually picks up their phone by 7:40. It’s 9:15. Maybe a good time to call." },
   },
   {
     min: 9 * 60 + 30,
     ms: 8200,
     status: "Phone in use again · letting the family know",
-    note: { state: "Active", kind: "update", text: "Phone in use since 9:24. A later start than usual. MaPa won’t treat one late morning as her new normal." },
+    note: { state: "Active", kind: "update", text: "Phone in use since 9:24. A later start than usual. MaPa won’t treat one late morning as their new normal." },
   },
 ];
 const SHE_PICKS_UP = 9 * 60 + 24;
@@ -182,10 +182,10 @@ const PILL: Record<State, string> = {
 };
 
 const STEPS_COPY = [
-  { when: "From day one", title: "Working, getting to know her", body: "The model decides from day one and gets surer every day." },
-  { when: "Every night", title: "Retrains while charging", body: "On her phone, only while it is charging and idle." },
-  { when: "Week two", title: "Confident", body: "Her own rhythm replaces the general one it started from." },
-  { when: "Every evening", title: "A note, not her data", body: "Written by AI on her phone. Only the note reaches you." },
+  { when: "From day one", title: "Working, getting to know them", body: "The model decides from day one and gets surer every day." },
+  { when: "Every night", title: "Retrains while charging", body: "On their phone, only while it is charging and idle." },
+  { when: "Week two", title: "Confident", body: "Their own rhythm replaces the general one it started from." },
+  { when: "Every evening", title: "A note, not their data", body: "Written by AI on their phone. Only the note reaches you." },
   { when: "Only when it matters", title: "An alert within hours", body: "A quiet morning reaches you hours in, not a day later. An ordinary late start sends nothing." },
 ];
 
@@ -281,7 +281,7 @@ export function PhoneLearning() {
       }
     };
 
-    // ---------- the note: written on her phone, delivered to yours ----------
+    // ---------- the note: written on their phone, delivered to yours ----------
     const deliver = (note: Note, famMin: number) => {
       const pill = q<HTMLElement>(".pl-fam-state");
       pill.className = PILL[note.state];
@@ -295,7 +295,7 @@ export function PhoneLearning() {
     const banner = (note: Note) => {
       const alert = note.kind === "alert";
       text(".pl-alert-kind", alert ? "MaPa · Alert" : "MaPa · Update");
-      text(".pl-alert-title", `Mummy: ${note.state}`);
+      text(".pl-alert-title", `Your parent: ${note.state}`);
       text(".pl-alert-body", note.text);
       const box = q<HTMLElement>(".pl-alert");
       box.style.borderColor = alert ? "rgba(254,131,87,0.75)" : "rgba(168,159,145,0.45)";
@@ -352,12 +352,12 @@ export function PhoneLearning() {
 
     // ---------- learning days ----------
     const startDay = (d: number) => {
-      text(".pl-badge-text", d < CONFIDENT_DAY ? `Day ${d + 1} · getting to know her, the model decides` : `Day ${d + 1} · confident, the model decides`);
+      text(".pl-badge-text", d < CONFIDENT_DAY ? `Day ${d + 1} · getting to know them, the model decides` : `Day ${d + 1} · confident, the model decides`);
       text(".pl-net-caption", "Today, as it happens");
-      text(".pl-bars-caption", "Her mornings, as learned so far");
+      text(".pl-bars-caption", "Their mornings, as learned so far");
       text(".pl-bar-l", "6 AM");
       text(".pl-bar-r", "10 AM");
-      text(".pl-status", d === TRAVEL_DAY ? "Day 9 · tagged travelling" : d === CONFIDENT_DAY ? "Confident now: her own rhythm leads" : "Learning her day");
+      text(".pl-status", d === TRAVEL_DAY ? "Day 9 · tagged travelling" : d === CONFIDENT_DAY ? "Confident now: their own rhythm leads" : "Learning their day");
       daylight(true);
       inputs.forEach((node) => node.setAttribute("fill-opacity", "0.06"));
       setStep(d < CONFIDENT_DAY ? 0 : 2);
@@ -411,7 +411,7 @@ export function PhoneLearning() {
     const startLive = () => {
       text(".pl-badge-text", "Live · the model decides");
       text(".pl-net-caption", "Latest 8 hours");
-      text(".pl-bars-caption", "Her usual next 4 hours");
+      text(".pl-bars-caption", "Their usual next 4 hours");
       text(".pl-bar-l", "+15 min");
       text(".pl-bar-r", "+4 h");
       daylight(true);
@@ -435,7 +435,7 @@ export function PhoneLearning() {
     };
 
     const fadeOut = () => {
-      text(".pl-status", "Replaying her first 21 days");
+      text(".pl-status", "Replaying their first 21 days");
       animate(q(".pl-content"), { opacity: [1, 0.15], duration: FADE_MS - 300, ease: "inOutSine" });
     };
     const resetAll = () => {
@@ -446,7 +446,7 @@ export function PhoneLearning() {
       utils.set(q(".pl-dot-skip"), { opacity: 0 });
       text(".pl-today", "");
       utils.set(q(".pl-alert"), { opacity: 0 });
-      deliver({ state: "Learning", text: "MaPa is learning her rhythm. Notes arrive each evening." }, MORNING);
+      deliver({ state: "Learning", text: "MaPa is learning their rhythm. Notes arrive each evening." }, MORNING);
       animate(q(".pl-content"), { opacity: [0.15, 1], duration: 500, ease: "outQuad" });
     };
 
@@ -542,10 +542,10 @@ export function PhoneLearning() {
       <div className="space-y-6 lg:col-span-5">
         <p className="flex items-center gap-2 text-[14px] text-nocturne-muted">
           <span aria-hidden className="pl-live h-2 w-2 rounded-full bg-[#fe8357]" />
-          <span className="text-nocturne-ink">Simulated</span> · Mummy’s first 21 days, then one quiet morning
+          <span className="text-nocturne-ink">Simulated</span> · a parent’s first 21 days, then one quiet morning
         </p>
         <h3 className="font-display text-3xl leading-tight text-nocturne-ink sm:text-4xl">
-          It learns her day on her phone. <span className="italic text-terracotta-glow">You get a note, or an alert when it matters. Never her data.</span>
+          It learns their day on their phone. <span className="italic text-terracotta-glow">You get a note, or an alert when it matters. Never their data.</span>
         </h3>
         <ol className="hidden space-y-2.5 md:block">
           {STEPS_COPY.map((s, i) => (
@@ -563,8 +563,7 @@ export function PhoneLearning() {
           ))}
         </ol>
         <p className="hidden text-[14px] text-nocturne-faint md:block">
-          One step: <span className="text-nocturne-ink">123 µs</span> on a Pixel 6a. Six layers with dilations 1 to 32 let the real model look back about
-          32 hours.
+          <span className="text-nocturne-ink">9,594 parameters</span>, 21 inputs every 15 minutes. Speed and battery on a real phone have not been measured for this version yet.
         </p>
       </div>
 
@@ -573,7 +572,7 @@ export function PhoneLearning() {
           viewBox={layout.view}
           className="mx-auto block h-auto w-full max-w-[580px] overflow-visible"
           role="img"
-          aria-label="Two phones. On Mummy’s phone, MaPa learns her daily rhythm over 21 simulated days, retraining at night while charging, and writes a short note each evening. Only that note reaches the family’s phone. Then one quiet morning: a little late at 7:45 sends no alert; at 9:15 the family gets an alert that she usually picks up her phone by 7:40, and at 9:30 an update that she is active again."
+          aria-label="Two phones. On a parent’s phone, MaPa learns their daily rhythm over 21 simulated days, retraining at night while charging, and writes a short note each evening. Only that note reaches the family’s phone. Then one quiet morning: a little late at 7:45 sends no alert; at 9:15 the family gets an alert that the parent usually picks up their phone by 7:40, and at 9:30 an update that they are active again."
         >
           <defs>
             <clipPath id="plScreen">
@@ -598,7 +597,7 @@ export function PhoneLearning() {
             </filter>
           </defs>
 
-          {/* Mummy's phone */}
+          {/* the parent's phone */}
           <rect x="0" y="168" width="5" height="54" rx="2.5" fill="#3d3630" />
           <rect x="0" y="236" width="5" height="54" rx="2.5" fill="#3d3630" />
           <rect x="355" y="210" width="5" height="84" rx="2.5" fill="#3d3630" />
@@ -623,14 +622,14 @@ export function PhoneLearning() {
               <path className="pl-bolt" d="M 303 38.5 L 297 45.5 L 301 45.5 L 299 50.5 L 305 43 L 301 43 Z" fill="#fe8357" opacity="0" />
 
               <text x="40" y="94" fill="#e07a5f" fontSize="14" style={mono}>
-                MaPa · on Mummy’s phone
+                MaPa · on your parent’s phone
               </text>
               <text x="40" y="120" fill="#faf7f2" fontSize="22" style={mono}>
-                Learning her rhythm
+                Learning their rhythm
               </text>
               <rect x="36" y="136" width="288" height="30" rx="15" fill="#221f1c" stroke="#3d3630" />
               <text className="pl-badge-text" x="180" y="155.5" textAnchor="middle" fill="#faf7f2" fontSize="13" style={mono}>
-                Day 1 · getting to know her, the model decides
+                Day 1 · getting to know them, the model decides
               </text>
 
               {Array.from({ length: LAYERS + 1 }, (_, layer) => (
@@ -675,7 +674,7 @@ export function PhoneLearning() {
               </text>
 
               <text className="pl-bars-caption" x="40" y="466" fill="#faf7f2" fontSize="14" style={mono}>
-                Her mornings, as learned so far
+                Their mornings, as learned so far
               </text>
               {Array.from({ length: BARS }, (_, i) => (
                 <rect key={`b${i}`} className="pl-bar" x={round2(BAR_X + i * BAR_STEP)} y={BAR_BASE} width={BAR_W} height="0" rx="2" fill="#857c71" />
@@ -705,7 +704,7 @@ export function PhoneLearning() {
               })}
 
               <text className="pl-status" x="40" y="628" fill="#e07a5f" fontSize="13" style={mono}>
-                Learning her day
+                Learning their day
               </text>
               <foreignObject x="36" y="636" width="288" height="58">
                 <p data-i18n-skip className="pl-today m-0 font-serif text-[14px] italic leading-snug text-nocturne-ink" />
@@ -715,7 +714,7 @@ export function PhoneLearning() {
           </g>
           <circle cx="180" cy="38" r="6.5" fill="#050505" stroke="#221f1c" />
 
-          {/* Your phone, in London */}
+          {/* Your phone, far away */}
           <g className="pl-fam">
           <rect className="pl-fam-frame" x={fam.x} y={fam.y} width={fam.w} height={fam.h} rx={fam.rx} fill="#0b0a09" stroke="#4a423b" strokeWidth="2" />
           <foreignObject x={fam.x + 12} y={fam.y + 14} width={fam.w - 24} height={fam.h - 28}>
@@ -725,20 +724,20 @@ export function PhoneLearning() {
                   <span className="pl-alert-kind text-terracotta-glow">MaPa · Alert</span>
                   <span className="text-nocturne-faint">now</span>
                 </div>
-                <p className="pl-alert-title m-0 text-[15px] text-nocturne-ink">Mummy: Unusual</p>
-                <p className="pl-alert-body m-0 text-[14px] leading-snug text-nocturne-ink">Mummy usually picks up her phone by 7:40.</p>
+                <p className="pl-alert-title m-0 text-[15px] text-nocturne-ink">Your parent: Unusual</p>
+                <p className="pl-alert-body m-0 text-[14px] leading-snug text-nocturne-ink">Your parent usually picks up their phone by 7:40.</p>
               </div>
               <div className="flex items-center justify-between text-[13px]">
-                <span>Your phone · London</span>
+                <span>Your phone</span>
                 <span className="pl-fam-clock tabular text-nocturne-ink">12:30 AM</span>
               </div>
               <div className="pl-fam-card space-y-2 rounded-2xl border border-nocturne-line bg-[#1d1a17] p-3">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-[16px] text-nocturne-ink">Mummy</span>
+                  <span className="text-[16px] text-nocturne-ink">Your parent</span>
                   <span className={PILL.Learning}>Learning</span>
                 </div>
-                <p className="pl-fam-note m-0 text-[14px] leading-snug text-nocturne-ink">MaPa is learning her rhythm. Notes arrive each evening.</p>
-                <p className="m-0 text-[13px] text-nocturne-faint">Written on her phone</p>
+                <p className="pl-fam-note m-0 text-[14px] leading-snug text-nocturne-ink">MaPa is learning their rhythm. Notes arrive each evening.</p>
+                <p className="m-0 text-[13px] text-nocturne-faint">Written on their phone</p>
               </div>
             </div>
           </foreignObject>

@@ -26,9 +26,9 @@ const STEPS = [
 ];
 
 const TIMELINE = [
-  { when: "Day 1", what: "Pretrained on real phone logs and on rhythms learned from them. At setup it reads up to a week of past phone use, so it knows her from day one." },
-  { when: "From day 1", what: "The model decides from day one, with an 8-hour safety floor underneath. Each new day of her own rhythm makes it surer." },
-  { when: "Week 2+", what: "Her own rhythm has taken over from the general one it started from." },
+  { when: "Day 1", what: "Pretrained on real phone logs and on rhythms learned from them. At setup it reads up to a week of past phone use, so it knows them from day one." },
+  { when: "From day 1", what: "The model decides from day one, with an 8-hour safety floor underneath. Each new day of their own rhythm makes it surer." },
+  { when: "Week 2+", what: "Their own rhythm has taken over from the general one it started from." },
   { when: "Day 30+", what: "Retraining moves from nightly to weekly, on Sunday night." },
 ];
 
