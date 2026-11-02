@@ -29,9 +29,9 @@
 
 ## The problem
 
-Many Indian parents live on their own, while their children work in another city or another country.
-A daily "Are you up? Did you eat?" call feels like checking up on them.
-Alarm apps wait on a fixed timer and know nothing about the person.
+Families can live across cities or countries, and frequent check-ins can be hard to balance with a person's independence.
+Fixed timers treat everyone the same and ignore individual routines.
+MaPa explores whether opt-in phone-use patterns can support a more personal daily check-in.
 
 | A 24-hour timer app | MaPa |
 |---|---|
