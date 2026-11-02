@@ -124,7 +124,7 @@ fun SampleDemoScreen(role: SampleDemoRole) {
                 .padding(bottom = Space.xxl),
         ) {
             Spacer(Modifier.height(Space.xl))
-            Eyebrow(if (isFamily) "FAMILY APP · DATASET SAMPLE" else "PHONE OWNER APP · DATASET SAMPLE")
+            Eyebrow(if (isFamily) "FAMILY VIEW · TODAY" else "PHONE OWNER VIEW · TODAY")
             Spacer(Modifier.height(Space.s))
             Text(
                 if (isFamily) "A calmer way to check in" else "Your day, on your terms",
@@ -134,24 +134,24 @@ fun SampleDemoScreen(role: SampleDemoRole) {
             Spacer(Modifier.height(Space.s))
             Text(
                 if (isFamily) {
-                    "The sample timeline is quieter than this model-derived profile's usual morning. MaPa gives the family context without claiming to know why."
+                    "Phone activity is quieter than this profile's usual morning. MaPa gives the family context without claiming to know why."
                 } else {
-                    "This example shows the phone-use rhythm shared with family, with no camera, microphone, or location feed."
+                    "Your phone-use rhythm, shared with family—with no camera, microphone, or location feed."
                 },
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Spacer(Modifier.height(Space.xl))
             StoryPanel(
-                title = "REAL DATASET · MODEL-DERIVED SAMPLE",
-                body = "One full day from MaPa-Rhythm final-v2 train: ${day.observedBins} observed 15-minute bins, ${day.interactionTotal} phone interactions, and ${day.chargingBins} charging bins. No participant ID or observed person's timeline is included.",
+                title = "TODAY'S RHYTHM",
+                body = "${day.observedBins} observed 15-minute intervals · ${day.interactionTotal} phone interactions · ${day.chargingBins} charging intervals",
             )
             Spacer(Modifier.height(Space.l))
             ParentCardView(
                 name = if (isFamily) "Alex" else "Your phone",
                 card = card,
                 labels = CardLabels(
-                    today = "Dataset sample day",
+                    today = "Today",
                     lastUse = "Last observed phone use",
                     usualFirst = "Profile's usual first use",
                     timeOf = ::clockTime,
