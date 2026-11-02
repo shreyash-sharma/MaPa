@@ -1,0 +1,6 @@
+scenario,alerted,episodes
+Delayed morning,0,120
+Life-tag day,0,120
+Normal long silence,9,120
+Daytime inactivity,65,65
+Phone left home,67,67
