@@ -133,9 +133,11 @@ The trained checkpoint has 9,594 parameters. ExecuTorch 0.7.0/XNNPACK exports ar
 - No location, Wi-Fi, Bluetooth, voice, or raw app names are model inputs. Session starts are a use-burst proxy, not device unlocks. Movement is unknown in final-v2 and is not claimed as learned.
 - No medical, emergency detection, or safety claims.
 
-## Design references
+## Prior work we learned from
 
-- Shen et al. (2025), arXiv:2509.23158 / IEEE BHI 2025: day-swap augmentation, similarity weighting, 14-hour daily-summary coverage gate, and sequence modeling adapted to 15-minute steps.
+Ideas adopted, no code or data reused. None of these is the paper of this model; MaPa has no paper yet.
+
+- Shen et al. (2025), IEEE BHI 2025 (preprint number 2509.23158): day-swap augmentation, similarity weighting, 14-hour daily-summary coverage gate, and sequence modeling adapted to 15-minute steps.
 - Cejudo et al. (2025), CASAS routine prediction: next-use forecasting, per-person sensitivity and deviation explanations.
 - Gibietz et al. (2026), Gerontechnology / CASAS HH101: learn normal patterns and adapt a per-person threshold using recent normal history.
 - ElderWatch AI and eNeighbor informed alert-level and morning-check experiments; the morning-check setting was not selected. StillFine's parent-first interaction remains a product idea and was not evaluated.
