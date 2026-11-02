@@ -12,7 +12,7 @@
 
 </div>
 
-## For judges, in 30 seconds
+## At a glance
 
 | | |
 |---|---|
