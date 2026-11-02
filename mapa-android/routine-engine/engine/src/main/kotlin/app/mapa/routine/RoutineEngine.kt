@@ -118,8 +118,8 @@ class RoutineEngine(
     /** Clean days behind [silencePrior] (`silence_prior_days` in the weights file). */
     private val silencePriorDays: Double = 0.0,
     /**
-     * The tested MaPa Rhythm Hybrid with its decision layer. When present it decides Unusual from day one
-     * ("please call"), and the 8-hour floor rule stays underneath it as the safety floor.
+     * The MaPa Rhythm Hybrid with its versioned decision policy. When present it decides Unusual from day one
+     * ("please call"); its selected policy controls the model's absolute quiet floor.
      */
     private val hybrid: HybridPipeline? = null,
 ) {
@@ -207,8 +207,9 @@ class RoutineEngine(
             trend = r.second
         }
 
+        val taggedDay = ledger.tagged(day)
         val hy = hybrid?.let { p ->
-            if (ledger.tagged(day)) p.tagToday()
+            if (taggedDay) p.tagToday(day)
             p.step(obs)
         }
         val row = features.build(obs, profile)
@@ -225,7 +226,8 @@ class RoutineEngine(
         val silenceMin = if (sign == null) Int.MAX_VALUE else (t - sign) * Bins.MINUTES
         val score = calibrator.score(nll)
         val rate = calibrator.weeklyRate(nll)
-        val modelUnusual = hy?.pleaseCall
+        val v2TaggedGuard = taggedDay && hybrid?.decisionPolicy?.suppressTaggedAlerts == true
+        val modelUnusual = if (v2TaggedGuard) false else hy?.pleaseCall
             ?: (obs.observed && silenceMin >= config.minModelSilenceMinutes && rate <= config.modelMaxWeeklyRate)
         val ready = hy != null || modelReady
         val phase = scheduler.phase(day)
@@ -238,7 +240,9 @@ class RoutineEngine(
         val decision = stateMachine.evaluate(
             StateInputs(
                 t = t, paused = paused, observed = obs.observed, lastInteractionT = last, lastActivityT = sign,
-                ruleUnusual = rules.unusual, floorTriggered = rules.floorTriggered,
+                ruleUnusual = rules.unusual && !v2TaggedGuard,
+                floorTriggered = rules.floorTriggered && !v2TaggedGuard &&
+                    !(hybrid != null && config.modelDecides && hybrid.decisionPolicy.hybridOwnsAbsoluteFloor),
                 modelUnusual = if (ready) modelUnusual else null, decider = decider,
                 expectedByT = expectedBy, usualFirstActivityMinute = profile.usualFirstActivity(day, dowOffset),
                 confidence = hy?.score ?: if (modelReady) score else null,

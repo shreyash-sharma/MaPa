@@ -26,6 +26,26 @@ class KotlinHybrid(weights: RhythmWeights) : HybridModel {
     override fun loadState(state: FloatArray) = reference.loadState(state)
 }
 
+/** Versioned decision rules around the frozen neural weights. */
+data class HybridDecisionPolicy(
+    val id: String,
+    val absoluteQuietBins: Int,
+    val suppressTaggedAlerts: Boolean,
+    val hybridOwnsAbsoluteFloor: Boolean,
+) {
+    init { require(absoluteQuietBins > 0) }
+
+    companion object {
+        /** Historical v1 behavior. Keep it available for exact result reproduction. */
+        val V1 = HybridDecisionPolicy("v1", 32, suppressTaggedAlerts = false,
+            hybridOwnsAbsoluteFloor = false)
+
+        /** v2 policy selected on train CV and evaluated on the post-selection derived cohort. */
+        val V2 = HybridDecisionPolicy("v2", 48, suppressTaggedAlerts = true,
+            hybridOwnsAbsoluteFloor = true)
+    }
+}
+
 /** Day-one start: archetype priors and shrinkage, from cold-start-priors.json (shipped as text). */
 class ColdStartPriors(
     val center: FloatArray,
@@ -55,7 +75,12 @@ class ColdStartPriors(
  * The real battery and charging still drive "Monitoring unavailable" and the low-battery note elsewhere.
  * Days with a life tag never enter the history (guard), and unobserved bins are never quiet.
  */
-class HybridPipeline(private val model: HybridModel, private val priors: ColdStartPriors, private val dowOffset: Int) {
+class HybridPipeline(
+    private val model: HybridModel,
+    private val priors: ColdStartPriors,
+    private val dowOffset: Int,
+    val decisionPolicy: HybridDecisionPolicy = HybridDecisionPolicy.V1,
+) {
     class Result(
         val t: Int,
         val logits: FloatArray,
@@ -78,6 +103,7 @@ class HybridPipeline(private val model: HybridModel, private val priors: ColdSta
     private val scoreHistory = ArrayDeque<DoubleArray>()    // last 14 full days, scores at eligible bins
     private var day: Int? = null
     private var dayTagged = false
+    private var pendingTaggedDay: Int? = null
     private val counts = IntArray(Bins.PER_DAY) { -1 }
     private val scores = DoubleArray(Bins.PER_DAY)
     private val eligible = BooleanArray(Bins.PER_DAY)
@@ -90,8 +116,10 @@ class HybridPipeline(private val model: HybridModel, private val priors: ColdSta
     private var lastHazard = 0.0
     private var lastSlot = -1
 
-    /** Marks today as unwell, travelling, guests or a festival: it will not be learned from. */
-    fun tagToday() { dayTagged = true }
+    /** Marks the given day as context-tagged, including when called before its first bin. */
+    fun tagToday(dayIndex: Int) {
+        if (day == dayIndex) dayTagged = true else pendingTaggedDay = dayIndex
+    }
 
     fun step(obs: BinObservation): Result {
         val d = Bins.day(obs.t)
@@ -123,8 +151,10 @@ class HybridPipeline(private val model: HybridModel, private val priors: ColdSta
         val score = 0.5 * (sigmoid(logits[17].toDouble()) + surprise)
         val confidence = sigmoid(logits[18].toDouble()).coerceIn(0.0, 1.0)
         val threshold = min(1.0, line + (1.0 - confidence) * UNCERTAINTY_MARGIN)
-        val call = quiet && (score >= threshold || streak >= SILENCE_FLOOR)
-        val look = quiet && !call && score >= LOOK_FRACTION * threshold
+        val tagAllowsAlert = !decisionPolicy.suppressTaggedAlerts || !dayTagged
+        val call = quiet && tagAllowsAlert &&
+            (score >= threshold || streak >= decisionPolicy.absoluteQuietBins)
+        val look = quiet && tagAllowsAlert && !call && score >= LOOK_FRACTION * threshold
         scores[slot] = score
         eligible[slot] = quiet
         return Result(obs.t, logits, score, threshold, call, look, history.size)
@@ -133,7 +163,8 @@ class HybridPipeline(private val model: HybridModel, private val priors: ColdSta
     private fun startDay(d: Int) {
         day?.let { closeDay(it) }
         day = d
-        dayTagged = false
+        dayTagged = pendingTaggedDay == d
+        if (pendingTaggedDay != null && pendingTaggedDay!! <= d) pendingTaggedDay = null
         counts.fill(-1); scores.fill(0.0); eligible.fill(false)
         streak = 0; survival = 1.0; lastHazard = 0.0; lastSlot = -1
         model.reset()
@@ -226,6 +257,7 @@ class HybridPipeline(private val model: HybridModel, private val priors: ColdSta
         const val LINE_FLOOR = 0.5
         const val UNCERTAINTY_MARGIN = 0.1
         const val LOOK_FRACTION = 0.7
+        /** Historical v1 floor; v2 uses [HybridDecisionPolicy.absoluteQuietBins]. */
         const val SILENCE_FLOOR = 32
         private val CONTEXT = intArrayOf(11, 12, 13, 18, 19)
         private val LN_CAP = ln1p(192.0)
