@@ -20,7 +20,7 @@ const APPS = [
     id: "family" as const,
     name: "Family app",
     role: "Family view",
-    steps: ["See the same sample day from the family view.", "Preview a gentle check-in message. Nothing is sent."],
+    steps: ["See the same example day from the family view.", "Preview a gentle check-in message. Nothing is sent."],
   },
 ];
 
@@ -54,10 +54,11 @@ export default function TryPage() {
           <div className="mt-7 flex flex-col gap-4 border-t border-line-strong/60 pt-5 text-sm text-ink-muted sm:flex-row sm:items-center sm:justify-between">
             <p>Google Play submission is in progress. These are cloud emulators, not physical phones.</p>
             <div className="flex gap-5">
-              <Link href="/docs/data/" className="text-terracotta-ink underline underline-offset-4">Sample data and privacy</Link>
+              <Link href="/docs/data/" className="text-terracotta-ink underline underline-offset-4">Data and privacy</Link>
               <Link href="/docs/results/" className="text-terracotta-ink underline underline-offset-4">Research results and limits</Link>
             </div>
           </div>
+          <p className="mt-4 max-w-4xl text-xs leading-relaxed text-ink-faint">Demo uses the same identity-free, model-derived example day bundled in both apps. It is not an observed record from a real person. No notifications, calls, or messages are sent.</p>
         </div>
       </main>
       <Footer />
