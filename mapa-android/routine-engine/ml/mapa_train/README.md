@@ -15,7 +15,7 @@ The data sets, in plain words:
    (golden files in `../models/cnn`). Checked 2026-10-27: features exact, logits within 2e-6, all 4 sizes.
 2. The MaPa-Syn data must have: `converted/synthetic`, `converted/synth_learned` (S2b), the real
    `heartbeat_inferred` bins, and a frozen `mapa-syn/v0.1/splits.csv` with `synth_learned` rows.
-   Episodes are optional: if `mapa-syn/v0.1/episodes/<split>/episodes.jsonl` exists, injected windows are
+   Episodes are optional: if `mapa-syn/v0.1/episodes/<split>/episodes.jsonl` exists, programmatically constructed windows are
    never learned as normal.
 
 ## Morning run

@@ -2,14 +2,14 @@
 
 Oct 27, 2026 · @shreyash
 
-MaPa-Syn is a benchmark of real phone-use days with labeled, injected disruptions. It tests one question: can a small rhythm model tell unusual non-use, normal quiet, and lost observation apart, without false alarms?
+MaPa-Syn is a benchmark of real phone-use days with labeled, programmatically constructed disruptions. It tests one question: can a small rhythm model tell unusual non-use, normal quiet, and lost observation apart, without false alarms?
 
 - **Base:** real 15-minute bins from licensed datasets. No new collection for v0.1.
-- **Labels:** every episode carries two labels. Label 1 is what we injected. Label 2 is what MaPa must do.
-- **Splits:** we split by person before any injection. One person never appears in two splits.
-- **Metrics:** false alerts on untouched real days and catch rate on injected events are two separate numbers. We never merge them.
+- **Labels:** every episode carries two labels. Label 1 is what we programmatically constructed. Label 2 is what MaPa must do.
+- **Splits:** we split by person before any scenario construction. One person never appears in two splits.
+- **Metrics:** false alerts on untouched real days and catch rate on programmatically constructed events are two separate numbers. We never merge them.
 - **Release:** generator, specs, labels, metrics and fully synthetic timelines go public. Real bins go public only where the licence allows it.
-- **Limit:** a caught injection is not a caught emergency. MaPa-Syn makes no medical or safety claim.
+- **Limit:** detecting a constructed scenario does not mean an emergency was detected. MaPa-Syn makes no medical or safety claim.
 
 This doc corrects the GPT proposal in four places. UbiqLog is CC BY 4.0, but it has no screen events and it holds location, which we must drop. Rice LiveLab forbids redistribution, so it is a design reference only. The 342-person set has no stated licence, so it is test-only. No set gives per-person ages; S3 gives only a group range of 18 to 70. The details are in the next section.
 
@@ -27,13 +27,13 @@ This section overrides every other section where they differ (decided 2026-10-27
 
 **Decisions**
 
-1. **Primary benchmark: synthetic parents.** All ten scenarios run here. Split by parent 70/15/15 before injection. All headline numbers come from this set and say "synthetic".
+1. **Primary benchmark: synthetic parents.** All ten scenarios run here. Split by parent 70/15/15 before scenario construction. All headline numbers come from this set and say "synthetic".
 2. **S3: no behaviour or quiet episodes.** Use S3 only for next-interaction log-loss on strict bins. Report 0 real behaviour episodes with the reason "no observed 3 h windows".
 3. **UbiqLog: evaluation only.** 11 people are too few to split (a 15% test split holds 1 or 2 people). In v0.1, no model trains on UbiqLog. All 11 people form the group `real_check`.
 4. **Clock anomalies.** People whose calendar span is more than 2 times their recorded days (p015, p022, p024, p026, p030) are a separate subgroup. Report results with and without them. The headline real number excludes them.
 5. **Independent windows.** Use non-overlapping 3 h windows only. At most one window per person per day. At most 10 episodes per person per scenario. Report each person's result, then a pooled result with a per-person bootstrap.
 6. **Inferred quiet.** A strict 3 h window with zero foreground count is a real hard negative for scenario 4. Label it `quiet_inferred`. Every text that uses it says "inferred, not verified non-use".
-7. **Long severities.** A real episode needs a strict window as long as the injected gap. If none exists, write 0 episodes with the reason.
+7. **Long severities.** A real episode needs a strict window as long as the programmatically constructed gap. If none exists, write 0 episodes with the reason.
 8. **Gate V8** counts synthetic plus real episodes. Real counts are always reported separately.
 9. **Data root** is `D:\GitHub\MaPa\data\MaPaData\`, which is gitignored. It replaces `D:\MaPaData\` in this doc.
 10. **Claims.** The card, the report and the pitch say: "Behaviour results are on synthetic parents. A real check on up to 11 UbiqLog people uses inferred observation."
@@ -69,7 +69,7 @@ This section overrides v0.1.1 and all older sections where they differ (decided 
 7. Age layer: the sources are mostly younger adults. Rescale session rate and daily use to the over-60 aggregates in `routine-engine/CALIBRATION.md`. Write every scaled parameter and its citation to `generator_card.md`.
 8. Implement with numpy and scipy only. No neural generator in v0.1.
 
-**Fidelity gates (a sampled set must pass all of these before injection)**
+**Fidelity gates (a sampled set must pass all of these before scenario construction)**
 
 | # | Check | Pass rule |
 | --- | --- | --- |
@@ -132,7 +132,7 @@ This section overrides v0.1.3 where they differ (decided 2026-10-28). We use the
 **Naming and provenance**
 
 1. "Derived data" is an allowed name for the generated timelines. Every row keeps `provenance` with one of three values: `real_observed`, `model_derived`, `injected`. Nobody may remove or rewrite this column.
-2. The card, the report and the pitch say in plain words: "Timelines are generated by models fitted to real phone logs. Every disruption is injected."
+2. The card, the report and the pitch say in plain words: "Timelines are generated by models fitted to real phone logs. Every disruption is programmatically constructed."
 3. Never write "real non-use data". Never present derived days as collected days.
 
 **Steering rule (the line we do not cross)**
@@ -190,13 +190,13 @@ This section overrides v0.1.3 and v0.1.4 where they differ (decided 2026-10-28).
 2. Dropped: leave-one-person-out testing, bootstrap intervals, the 300-trial search, repeated critic rounds.
 3. Kept: provenance column on every row (`real_observed`, `model_derived`, `injected`); split by person; `real_check` never read; stale-as-fresh = 0; no medical claims; licence check before anything goes public; no upload without shreyash's yes.
 4. Headline technique: self-supervised pretraining (masked-bin and next-bin) on real bins of `gen_fit` train people. Then "pretrained on real smartphone logs" is true.
-5. Wording: "Timelines are generated by models fitted to real phone logs. Every disruption is injected."
+5. Wording: "Timelines are generated by models fitted to real phone logs. Every disruption is programmatically constructed."
 
 **Order of work**
 
 | Day | Work |
 | --- | --- |
-| Oct 28 | Promote `censored_km`. Pretrain. Run S3 (split), S4 (gaps) and S5 (inject 10 scenarios) on both sets. |
+| Oct 28 | Promote `censored_km`. Pretrain. Run S3 (split), S4 (gaps) and S5 (add 10 scenarios) on both sets. |
 | Oct 29 | S6 and S7: trace the 4 h rule, statistics-only and our model. One results table. |
 | Oct 30 | Dataset card. Hugging Face dry run. shreyash approves before upload. |
 | Oct 31 to Nov 3 | Buffer for demo, video and pitch. |
@@ -224,7 +224,7 @@ Every new column has a companion `<col>_src` with `real_observed`, `model_derive
 1. Real logs give what they have. Never fill a real gap with a made-up value labelled real. Use -1 and `unobserved`.
 2. Derived parents get the new signals from the same fitted statistical model (same fit, same seed rules), labelled `model_derived`. Conditioning: unlocks and sessions follow the in_use state; movement follows the person's hourly profile and state.
 3. Splits and test people stay exactly as in `final-v2`. Check with a test that compares person lists.
-4. Episodes: injected disruptions change the new signals consistently. Example: phone left at home gives unlocks 0 and movement 0 together with the other signals. Observation failures (app killed, permission revoked) set new columns to -1.
+4. Episodes: programmatically constructed disruptions change the new signals consistently. Example: phone left at home gives unlocks 0 and movement 0 together with the other signals. Observation failures (app killed, permission revoked) set new columns to -1.
 5. Manifest lists SHA-256 for every file, row counts, the real versus derived share per column, and the `final-v2` hashes it did not change.
 6. Fidelity: repeat the F1 to F5 table and add the hourly profile of unlock count and movement, derived versus observed.
 7. Make `final-v3` read-only after its test passes. Codex retrains the winning design on `final-v3` by 2026-10-31.
@@ -242,7 +242,7 @@ S3 and UbiqLog are the only sets we may train on and partly release. The others 
 | [UniMiB SHAR](https://ar5iv.arxiv.org/html/1611.07688) | 30, lab sessions | No licence found in the paper. Must ask the authors before release. | 18 to 60, mean 27 | 3 s windows at 50 Hz | Accelerometer: 8 fall types, 9 daily activities | Not v0.1. Later experimental extension only. |
 | LSApp, Leiden derived data | 292; 598 | No licence (LSApp); Leiden raw by request | Leiden 16 to 86 | App open and close times | App sessions | Test only, as in the hackathon brief. |
 
-Two hard limits. First, no open set has per-person ages with fine timestamps, so v0.1 does not condition on age. Second, real data has no labeled emergencies, so every positive label in MaPa-Syn is injected.
+Two hard limits. First, no open set has per-person ages with fine timestamps, so v0.1 does not condition on age. Second, real data has no labeled emergencies, so every positive label in MaPa-Syn is programmatically constructed.
 
 ## Scenario list (v0.1)
 
@@ -255,7 +255,7 @@ v0.1 has ten scenarios in two groups: six behaviour scenarios and four observati
 | 3 | Phone left at home | Same as 1, plus `moved=0` and `charging` unchanged. Device stays healthy. | UNUSUAL\_INACTIVITY. The phone cannot tell this from 1. The note must not guess a cause. | Positive (by design) |
 | 4 | Normal long silence | No change. Pick real quiet windows of 3+ h that match the person's own history (naps, temple, TV). | ACTIVE or QUIET. No alert. | Hard negative |
 | 5 | Routine shift | Shift all use by +2 or -2 h for 7 to 14 days in a row. | Alerts allowed on day 1 to 2 only. Then a "new routine?" prompt to family. The model must not learn it without family confirmation. | Mixed |
-| 6 | Life tag day | Inject silence as in 1, but add a family life tag (travel, guests). | QUIET with tag. No alert. Day excluded from training. | Hard negative |
+| 6 | Life tag day | Add silence as in 1, but add a family life tag (travel, guests). | QUIET with tag. No alert. Day excluded from training. | Hard negative |
 | 7 | Network outage | Set `network_ok=0` for 2 to 24 h. Local bins keep real use. Server sees no upload, then a backfill. | MONITORING\_UNAVAILABLE on the family side. Never an all-clear. After backfill, replay must match real use. | Observation |
 | 8 | App killed by OS | Delete all bins in the window (no heartbeat). | MONITORING\_UNAVAILABLE + stale notice after the freshness limit | Observation |
 | 9 | Battery dead | Ramp `battery` down to 0 over 2 to 6 h, then delete bins until a charge event. | lowBattery alert before 0, then MONITORING\_UNAVAILABLE | Observation |
@@ -269,7 +269,7 @@ Each positive scenario runs at three severities (mild, clear, severe), so we can
 
 Every episode has two labels that we never merge. Label 1 (`injected`) says what the generator changed. Label 2 (`expected`) says what MaPa must show and send. A test passes or fails on label 2 only. Label 1 lets us explain the result.
 
-Severity is relative to the person. The generator reads the person's gap distribution from all observed days before the injected day, as the phone would. It never reads later days. Mild = gap at their 90th percentile, clear = 97th, severe = 99.5th or more. It writes the percentile into the record.
+Severity is relative to the person. The generator reads the person's gap distribution from all observed days before the programmatically constructed day, as the phone would. It never reads later days. Mild = gap at their 90th percentile, clear = 97th, severe = 99.5th or more. It writes the percentile into the record.
 
 One record per episode, in `episodes.jsonl`:
 
@@ -316,13 +316,13 @@ Field rules:
 
 ## Splits
 
-We split whole people first, then inject. This order stops one person's days from leaking into both train and test.
+We split whole people first, then add. This order stops one person's days from leaking into both train and test.
 
 1. Convert each dataset to bins. Drop people with fewer than 28 observed days.
 2. Assign each person to train (70%), validate (15%) or test (15%) with a fixed seed, per dataset. Write `splits.csv` (`pid, source, split`) and freeze it. Never re-draw it after we see results.
-3. Inside each person, days 1 to 14 stay untouched. This matches on-phone learning: the personal head trains on these days. Injections start on day 15.
-4. Inject with a different seed per split (train, validate, test). Test parameters are not visible to training code.
-5. Train and validate timelines get at most one injected episode per person per week, so the baseline stays real. Test episodes are different: each test episode is its own copy of the person's timeline with exactly one injection (see "Episode count").
+3. Inside each person, days 1 to 14 stay untouched. This matches on-phone learning: the personal head trains on these days. Scenario additions start on day 15.
+4. Add with a different seed per split (train, validate, test). Test parameters are not visible to training code.
+5. Train and validate timelines get at most one constructed episode per person per week, so the baseline stays real. Test episodes are different: each test episode is its own copy of the person's timeline with exactly one scenario construction (see "Episode count").
 6. Add one cross-dataset test: train on S3 people, test on UbiqLog people, and the reverse. This checks that the model learns rhythm, not one study's logging style.
 7. Test-only sets (Pielot, LSApp, Leiden) are a fourth group, `external_test`. They never touch training or tuning.
 
@@ -330,12 +330,12 @@ With about 56 usable people (21 S3 + 35 UbiqLog, before dropouts), the test spli
 
 ## Metrics
 
-We report two headline numbers and never combine them into one score. False alerts come from untouched real days. Catch rate comes from injected episodes.
+We report two headline numbers and never combine them into one score. False alerts come from untouched real days. Catch rate comes from constructed episodes.
 
 | Metric | Measured on | Definition | Target for v0.1 |
 | --- | --- | --- | --- |
 | False alerts per person-week | Untouched real days of test people, plus hard negatives (scenarios 4, 6) | Count of `unusual` alerts / person-weeks | Lower than the 4 h rule on the same days |
-| Catch rate | Injected positives (scenarios 1, 2, 3, 5) | Share with an alert inside the window, by severity | Report per severity; no single target |
+| Catch rate | Programmatically constructed positives (scenarios 1, 2, 3, 5) | Share with an alert inside the window, by severity | Report per severity; no single target |
 | Time to alert | Caught positives | Minutes from gap start to alert, median and 90th percentile | Report only |
 | Stale-as-fresh | Observation scenarios (7 to 10) | Share of bins where the family side shows ACTIVE or QUIET while data is missing | 0, a hard gate |
 | Correct failure reason | Scenarios 7 to 10 | Share where the stale reason matches (network, app, battery, permission) | Report only |
@@ -344,7 +344,7 @@ We report two headline numbers and never combine them into one score. False aler
 Rules for every number:
 
 - Write the count of people and episodes beside it, and a 95% interval from a per-person bootstrap.
-- Label it "real days" or "injected". Never write "accuracy" alone.
+- Label it "real days" or "programmatically constructed". Never write "accuracy" alone.
 - Compare the same baselines as the harness: 4 h rule, 8 h floor, statistics only, GRU, CNN.
 - Stale-as-fresh above 0 blocks a release, whatever the other numbers say.
 
@@ -356,7 +356,7 @@ We can release everything we write, plus derived bins from the two CC BY 4.0 set
 | --- | --- | --- |
 | Generator code, converters, metric scripts | Yes (Apache 2.0) | Our own code |
 | Spec: bins format, `episodes.jsonl` schema, scenario list | Yes | Our own work |
-| Fully synthetic parents + injections | Yes | No real person behind them |
+| Fully synthetic parents + scenario additions | Yes | No real person behind them |
 | S3 and UbiqLog derived 15-min bins + labels | Yes, with attribution (CC BY 4.0) | Licence allows it. We keep counts only, no app names, no location, no voice data. Calendar dates become day index and weekday. |
 | `splits.csv`, seeds, manifests | Yes | Lets others reproduce the numbers |
 | Model weights trained on synthetic + S3 + UbiqLog | Yes, with attribution | Licence allows derived work |
@@ -364,7 +364,7 @@ We can release everything we write, plus derived bins from the two CC BY 4.0 set
 | Rice LiveLab anything | No | Redistribution needs written permission |
 | UniMiB SHAR windows | No, until the authors agree | No licence found |
 
-The dataset card states: built for routine-gap research; not a medical device; a caught injection is not a caught emergency; ages are group ranges only; real positives do not exist in the data.
+The dataset card states: built for routine-gap research; not a medical device; detecting a constructed scenario does not mean an emergency was detected; ages are group ranges only; real positives do not exist in the data.
 
 ## v0.1 scope and Codex brief
 
@@ -479,7 +479,7 @@ Codex builds in nine stages, in this order. Each stage ends with a gate. Codex d
 | S2 Convert | `python -m mapa_syn convert --source <name>` | `converted\<source>\*` | Schema check passes. No forbidden field (location, WiFi, Bluetooth, phone number, contact, app name, voice). Missing channels are `-1`. `README.md` and `SUMMARY.md` exist. |
 | S3 Split | `python -m mapa_syn split` | `splits.csv` | No pid in two splits. Shares within one person of 70/15/15. People under 28 days are listed as dropped. SHA-256 is stored in the manifest. |
 | S4 Gaps | `python -m mapa_syn gaps` | `gaps\<split>.csv` | Causal: a test changes days after day d and checks that the gaps at day d do not change. |
-| S5 Inject | `python -m mapa_syn inject --split <split>` | `episodes.jsonl`, `injection_manifest.json` | One test per scenario passes. Only `channels_changed` differ from the base timeline. No injection on days 1 to 14. Behaviour windows are fully observed in the base. A rerun with the same seed gives the same SHA-256. |
+| S5 Add | `python -m mapa_syn inject --split <split>` | `episodes.jsonl`, `injection_manifest.json` | One test per scenario passes. Only `channels_changed` differ from the base timeline. No scenario construction on days 1 to 14. Behaviour windows are fully observed in the base. A rerun with the same seed gives the same SHA-256. |
 | S6 Export and trace | `python -m mapa_syn export`, then `gradle :harness:run --args="trace <harness dir> <weights> <trace file>"`, then `python -m mapa_syn baselines` | `harness\<split>\`, `traces\<detector>\` | The harness reads every folder. Trace rows = bin rows. Each detector (4 h rule, statistics only, GRU, CNN) has a trace for each split. |
 | S7 Evaluate | `python -m mapa_syn evaluate` | `eval\results.json`, `eval\REPORT.md` | Every metric in the Metrics table is present for every detector, with people count, episode count and a 95% interval. |
 | S8 Release staging | `python -m mapa_syn release --dry-run` | `release\`, `DATASET_CARD.md` | Only allowed sources. Card has attribution, licence and limits. Nothing is uploaded. |
@@ -512,18 +512,18 @@ The critic is a separate Codex run with a fresh context. It reads this doc and t
 
 | Area | Check | Automated? |
 | --- | --- | --- |
-| Leakage | No pid in two splits. Gap stats never read days after the injected day. Test seeds and test config are not read by training code. | Yes |
-| Injection fidelity | Bin-by-bin diff of variant against base: only `channels_changed` differ, only inside the window. | Yes |
-| Injection placement | No injection on days 1 to 14. Behaviour windows sit on fully observed bins. Night rule respected (no alert window inside 22:00 to 07:00). | Yes |
+| Leakage | No pid in two splits. Gap stats never read days after the programmatically constructed day. Test seeds and test config are not read by training code. | Yes |
+| Scenario construction fidelity | Bin-by-bin diff of variant against base: only `channels_changed` differ, only inside the window. | Yes |
+| Scenario construction placement | No scenario construction on days 1 to 14. Behaviour windows sit on fully observed bins. Night rule respected (no alert window inside 22:00 to 07:00). | Yes |
 | Labels | `expected` follows the scenario table. Severity matches `person_gap_percentile`. Hard negatives have `alert = none`. | Yes |
 | Sample review | Open 2 episodes per scenario (20 total). Plot or print the window. Confirm by eye that it matches the scenario. | Manual |
 | Privacy | No forbidden fields or free text anywhere in `converted\`, `mapa-syn\` or `release\`. Calendar dates are gone; only day index and weekday remain. | Yes |
 | Licence | `release\` holds only S3, UbiqLog and synthetic data. Card names both sources and CC BY 4.0. | Yes |
 | Determinism | Rerun S3 to S5 with the same config; all SHA-256 values match the manifest. | Yes |
-| Metrics | Every number has people count, episode count, interval, and a "real days" or "injected" label. False alerts and catch rate are never combined. | Yes |
+| Metrics | Every number has people count, episode count, interval, and a "real days" or "programmatically constructed" label. False alerts and catch rate are never combined. | Yes |
 | Safety floor | Stale-as-fresh = 0 for every detector on scenarios 7 to 10. | Yes |
 | Repo hygiene | No data files in git. No keys. Existing harness results unchanged. | Yes |
-| Honesty | REPORT.md and the card make no medical or safety claim and do not call injected events emergencies. | Manual |
+| Honesty | REPORT.md and the card make no medical or safety claim and do not call programmatically constructed events emergencies. | Manual |
 
 ## Fix mode and loop rules
 

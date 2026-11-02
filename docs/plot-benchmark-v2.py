@@ -41,7 +41,7 @@ fig.suptitle(
 )
 fig.text(
     0.06, 0.925,
-    "40 generated parent timelines × 120 days · 685.7 observed person-weeks · injected behavior episodes",
+    "40 generated parent timelines × 120 days · 685.7 observed person-weeks · programmatically constructed behavior scenarios",
     ha="left", fontsize=9.5, color="#53636C",
 )
 
@@ -85,7 +85,7 @@ for idx, method in enumerate(selected):
                       color="#34464F")
 ax_catch.set_xticks(x, groups)
 ax_catch.set_ylim(0, 1.27)
-ax_catch.set_ylabel("Injected behavior episodes caught")
+ax_catch.set_ylabel("Constructed behavior scenarios caught")
 ax_catch.set_yticks(np.linspace(0, 1, 6), ["0%", "20%", "40%", "60%", "80%", "100%"])
 ax_catch.set_title("Catch rate by severity", loc="left", pad=12, fontweight="bold", color="#172B35")
 ax_catch.grid(axis="y", color="#DDE2E2", linewidth=0.8)
@@ -96,7 +96,7 @@ ax_catch.legend(frameon=False, ncol=2, loc="upper center", bbox_to_anchor=(0.5, 
 
 fig.text(
     0.06, 0.045,
-    "Bars show controlled derived-data results, not real-world disruptions. The catch chart includes no-op injected windows. "
+    "Bars show controlled derived-data results, not real-world disruptions. The catch chart includes cases with no changed phone-use inputs. "
     "MaPa policy: 30/30, 29/29, 21/21 catches on changed mild/clear/severe windows.",
     ha="left", fontsize=8.2, color="#53636C",
 )

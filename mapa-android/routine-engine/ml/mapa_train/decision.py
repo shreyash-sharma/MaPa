@@ -131,7 +131,7 @@ def day_views(split, model, access_authorized=False):
         injected=str(df.injected.iloc[0])
         if expected == "unusual_inactivity" and injected not in {
                 "daytime_inactivity", "delayed_morning", "phone_left_home"}:
-            raise ValueError(f"unusual target is not labelled as an injected disruption: {g['pid']}/{eid}/{g['day']}")
+            raise ValueError(f"unusual target is not labelled as a programmatically constructed scenario: {g['pid']}/{eid}/{g['day']}")
         out.append(dict(pid=g["pid"], eid=g["episode_id"], day=int(g["day"]), avail=avail, tags=tags, win=win,
                         counts=counts, silence=silence, score_behavior=scores[i], score_surprise=surprise,
                         confidence=confidence[i],

@@ -43,7 +43,7 @@ There are now two training codes. They overlap.
 
 1. **`ml/mapa_release`** (the dataset thread, committed overnight). It built the dataset **MaPa-Rhythm**:
    - Real strict-heartbeat phone logs from S3 and UbiqLog (people outside `real_check`), plus 200 parents
-     x 120 days sampled from a generator fitted to those real logs, plus 10 injected disruption scenarios.
+     x 120 days sampled from a generator fitted to those real logs, plus 10 programmatically constructed disruption scenarios.
    - Frozen splits: train 162 people, validation 39, test 39 (`final/`, read-only, C8 PASS).
    - The 11 `real_check` people are kept out of fitting and release.
    - It trained 8 CNN versions (`models/cnn-v1` to `cnn-v7-q97`) and checked each on validation alerts.
@@ -145,7 +145,7 @@ prediction error's z-score passes a p-value, then keep it only if at least one a
 range (an explanation step). The p-value is set per group: 0.85 to 0.9 for frail people, 0.99 for healthy ones.
 They could not measure false alarms (no labels).
 *Borrow:* (1) a per-parent sensitivity the family chooses ("tell me sooner" vs "fewer alerts");
-(2) an explanation of which part of the day was different; (3) our injected-label benchmark **does** measure
+(2) an explanation of which part of the day was different; (3) our scenario label benchmark **does** measure
 false alerts, which this work could not.
 
 **Gibietz et al. 2026** (CASAS HH101). Autoencoder per person; inputs scaled by the person's own maximum per

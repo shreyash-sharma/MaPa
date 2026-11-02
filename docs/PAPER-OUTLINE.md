@@ -11,7 +11,7 @@ which earlier routine-anomaly work could not.
 
 ## Why it is new (each point must be checked against the final related-work search)
 1. **A public benchmark with labels for both sides.** Real public phone logs (S3, UbiqLog), a generator fitted
-   to them, and 10 injected scenarios with "injected" and "expected" labels. Cejudo et al. 2025 could not
+   to them, and 10 programmatically constructed scenarios with "programmatically constructed" and "expected" labels. Cejudo et al. 2025 could not
    measure false alarms because they had no labels; we can.
 2. **15-minute rhythm, not daily totals.** Shen et al. 2025 name this as future work; we do it.
 3. **On-device and private.** A 5,360-parameter causal CNN on ExecuTorch (measured on a Pixel 6a); only
@@ -57,4 +57,4 @@ which earlier routine-anomaly work could not.
 
 ## Honest wording to reuse
 "MaPa is pretrained on real smartphone logs. Its non-use data comes from a statistical model learned from
-real phone use." "An injected disruption is not an observed emergency."
+real phone use." "A programmatically constructed behavior scenario is not an observed emergency."

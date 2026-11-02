@@ -30,7 +30,7 @@ def plot():
             if n:ax.scatter([m['false_alerts_per_person_week']],[c/n],marker=marker,color='black',s=45,label=baseline,zorder=5)
         ax.set_title(severity.capitalize());ax.set_xlabel('False alerts / observed person-week')
         ax.set_xlim(left=0);ax.set_ylim(0,1.03);ax.grid(alpha=.2)
-    axes[0].set_ylabel('Behaviour-only injected catch rate')
+    axes[0].set_ylabel('Behavior-scenario detection rate')
     handles,labels=axes[-1].get_legend_handles_labels()
     fig.legend(handles,labels,loc='lower center',bbox_to_anchor=(.5,-.1),ncol=4,fontsize=7)
     fig.suptitle('Validation tradeoffs — shared latch policy; no test selection; failures retained',fontsize=11)

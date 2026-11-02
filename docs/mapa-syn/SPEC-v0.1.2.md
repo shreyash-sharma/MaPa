@@ -27,7 +27,7 @@ This section overrides v0.1.1 and all older sections where they differ (decided 
 7. Age layer: the sources are mostly younger adults. Rescale session rate and daily use to the over-60 aggregates in `routine-engine/CALIBRATION.md`. Write every scaled parameter and its citation to `generator_card.md`.
 8. Implement with numpy and scipy only. No neural generator in v0.1.
 
-**Fidelity gates (a sampled set must pass all of these before injection)**
+**Fidelity gates (a sampled set must pass all of these before scenario construction)**
 
 | # | Check | Pass rule |
 | --- | --- | --- |

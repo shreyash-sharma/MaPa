@@ -166,11 +166,11 @@ def shipped_cnn_metrics(views: list[dict], arrays: dict, groups: list[dict], dev
 
 def zero_history_episode_replay(model, arrays: dict, groups: list[dict], views: list[dict],
                                 config: dict, device: str) -> dict:
-    """Stress replay held-out injected behaviour episodes as day-zero installs.
+    """Stress replay held-out behavior scenarios as day-zero installs.
 
     Each episode is evaluated with no prior personal days. This is reported
     separately from ordinary split metrics because it re-times existing
-    injected episodes; it does not add a new observed event or alter final-v2.
+    constructed episodes; it does not add a new observed event or alter final-v2.
     """
     chosen = [i for i, view in enumerate(views)
               if view["eid"] and view["expect"] == "unusual_inactivity"]
@@ -237,7 +237,7 @@ def zero_history_episode_replay(model, arrays: dict, groups: list[dict], views: 
         ci[severity] = np.quantile(draws[valid, 0] / draws[valid, 1], [.025, .975]).tolist()
     return {
         "status": "evaluated_separately",
-        "description": "Existing held-out injected behaviour episodes replayed as simulated install-day episodes with zero prior personal days; not pooled into ordinary test metrics.",
+        "description": "Existing held-out behavior scenarios replayed as simulated install-day cases with zero prior personal days; not pooled into ordinary test metrics.",
         "people": len(per_person),
         "episodes_by_severity": {s: {"caught": n, "episodes": total,
                                       "rate": n / max(total, 1), "ci95_person_bootstrap": ci[s]}
@@ -274,7 +274,7 @@ def render_report(result: dict) -> str:
              f"- Held-out split opened: {str(result['test_opened'] if split == 'test' else True).lower()}",
              "- Validation is a single confirmation; test is a single final evaluation. No threshold selection or refit occurs here.", "",
              "## False alerts and behaviour catches", "",
-             "False alerts are per observed person-week. Behaviour catches use injected behaviour episodes only; observation episodes are listed separately.", "",
+             "False alerts are per observed person-week. Behavior-scenario detections are counted separately from observation cases.", "",
              "| System | False alerts / person-week (95% person-bootstrap CI) | Mild catch | Clear catch | Severe catch |", "|---|---:|---:|---:|---:|"]
     for name, metrics in rows:
         catches = metrics.get("catch", {})
@@ -307,7 +307,7 @@ def render_report(result: dict) -> str:
               "", "### 8-hour baseline", "", "```json", json.dumps(result["eight_hour_rule"], indent=2), "```",
               "", "### Shipped CNN baseline", "", "```json", json.dumps(cnn, indent=2), "```",
               "", "### Cold-start curve", "", "```json", json.dumps(result["cold_start_curve"], indent=2), "```",
-              "", "### Zero-history first-week injected stress replay", "", "```json",
+              "", "### Zero-history first-week scenario stress replay", "", "```json",
               json.dumps(result["cold_start_unwell_first_week_stress"], indent=2), "```",
               "", "### Next-use log-loss", "", "Raw model forecast:", "", "```json",
               json.dumps(result["next_use_raw"], indent=2), "```", "", "Train-OOF calibrated model/profile blend:", "",
