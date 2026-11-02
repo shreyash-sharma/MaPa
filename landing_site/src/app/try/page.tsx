@@ -20,7 +20,7 @@ const APPS = [
     id: "family" as const,
     name: "Family app",
     role: "Family view",
-    steps: ["See the same example day from the family view.", "Preview a gentle check-in message. Nothing is sent."],
+    steps: ["See the same daily rhythm from the family view.", "Preview a gentle check-in message. Nothing is sent."],
   },
 ];
 

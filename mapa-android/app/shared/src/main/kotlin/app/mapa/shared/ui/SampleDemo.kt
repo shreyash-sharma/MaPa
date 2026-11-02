@@ -80,11 +80,11 @@ private fun loadDemoDay(context: Context): DemoDay {
 private fun sampleCard(day: DemoDay) = ParentCard(
     state = RoutineState.QUIET,
     stateLabel = "Quieter than usual",
-    detail = "The sample has no phone use since ${clockTime(day.lastUseMinute)}. This profile's median first-use time is ${clockTime(day.usualFirstUseMinute)}.",
+    detail = "No phone use recorded since ${clockTime(day.lastUseMinute)}. This profile's median first-use time is ${clockTime(day.usualFirstUseMinute)}.",
     updatedAgo = "Updated 10:45 AM",
     stale = false,
     forecast = "Usual first phone use: around ${clockTime(day.usualFirstUseMinute)}.",
-    note = "This is a model-derived dataset example, not a real person's phone record. Quiet phone time has many ordinary explanations.",
+    note = "Phone activity cannot show what someone is doing. Quiet phone time has many ordinary explanations.",
     noteByAi = false,
     learning = null,
     modelLine = "MaPa Rhythm Hybrid",
