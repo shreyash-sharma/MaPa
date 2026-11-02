@@ -8,7 +8,7 @@ tags:
 - smartphone
 - routine
 - anomaly-detection
-- synthetic-derived
+- derived
 task_categories:
 - time-series-forecasting
 language:
@@ -97,7 +97,7 @@ interaction counts per 15 minutes with relative time; person ids are pseudonymou
 
 - Built for families in India, but the real logs do not come from Indian older adults.
 
-- Real data is under 1% of training days (about 106 real days against about 44,000 training days).
+- About 1% of the training days are real (532 of about 44,000 person-days); real 15-minute steps are 0.09% of training rows.
 - The real people were mostly younger than the intended users (older parents).
 - Disruptions are injected; none is an observed emergency.
 - The generator matches some real statistics better than others (see Fidelity below; the quiet-length fit is weaker than the hand-written baseline).
