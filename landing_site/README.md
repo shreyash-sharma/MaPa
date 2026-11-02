@@ -33,11 +33,11 @@ npm run build          # static export to out/
 - `/docs/` is the technical documentation, rendered at build time from [`content/docs/`](content/docs) (the approved
   text; edit it there). Charts and the architecture diagram live in `public/docs/`. Tables become labelled cards on
   phones. The page list and figure captions are in [`src/lib/docs.ts`](src/lib/docs.ts).
-- `/try/` streams one Limrun Android emulator at a time. The Modal backend holds `LIM_API_KEY` and `MAPA_DEMO_ACCESS_CODE` in a `limrun-demo` secret. The judge access code is entered on the page and checked by the server; it is not shipped in the static site.
-  and uploads the two debug APKs to Limrun Asset Storage as `mapa-parent-demo.apk` and `mapa-family-demo.apk`. The
-  emulator has a 3-minute inactivity timeout and a 10-minute hard timeout; the page requests teardown when the visitor
-  stops or leaves. Only the per-instance stream token reaches the browser. The demo deep link opens a fixed fictional
-  screen in debug builds. It does not read phone activity or connect to Firebase.
+- `/try/` streams two Limrun Android emulators side by side and loads the debug APKs from Limrun Asset Storage as
+  `mapa-parent-judge-demo-v2.apk` and `mapa-family-judge-demo-v2.apk`. The Modal backend reads `LIM_API_KEY` from the
+  `custom-secret` secret. Each emulator has a 3-minute inactivity timeout and a 10-minute hard timeout. Only the
+  per-instance stream token reaches the browser. Both builds load the same identity-free, model-derived day from the
+  frozen MaPa-Rhythm final-v2 training dataset. They do not collect live phone activity, sign in, sync, or connect to Firebase.
 
 ## Languages
 

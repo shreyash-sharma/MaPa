@@ -5,8 +5,8 @@ import { Masthead } from "@/components/Masthead";
 import { DemoPlayers } from "./DemoPlayers";
 
 export const metadata: Metadata = {
-  title: "Try the demo · MaPa",
-  description: "The MaPa phone owner and family Android apps, streamed in the browser with example data.",
+  title: "Try the live demo · MaPa",
+  description: "Explore MaPa's parent and family Android apps side by side in Limrun cloud emulators with a model-derived sample from the frozen MaPa dataset.",
 };
 
 const APPS = [
@@ -14,13 +14,13 @@ const APPS = [
     id: "parent" as const,
     name: "Parent app",
     role: "Phone owner view",
-    steps: ["Review the example activity chart and usual first-use time.", "Notice that the sample state describes phone activity, not a person's safety.", "This sample mode reads no device activity."],
+    steps: ["See Alex's model-derived dataset day, including a quieter-than-usual morning.", "Review the rhythm summary and the phone owner's privacy context.", "No account or live phone telemetry is used in this demo."],
   },
   {
     id: "family" as const,
     name: "Family app",
     role: "Family view",
-    steps: ["Review the same fictional example from a family view.", "Read the sample note and last-use time.", "This emulator does not sync with the parent app."],
+    steps: ["See the same model-derived morning from a family view.", "Read the context and preview a gentle check-in message.", "The message is a local preview; the sample apps do not sync or send it."],
   },
 ];
 
@@ -42,12 +42,18 @@ export default function TryPage() {
           <header className="max-w-3xl space-y-4">
             <p className="font-mono text-xs tracking-wide text-terracotta-ink">Browser demo</p>
             <h1 className="font-display text-5xl leading-[1.02] text-ink sm:text-6xl">
-              Try both apps, <span className="italic text-terracotta-ink">no phone needed.</span>
+              Try both Android apps <span className="italic text-terracotta-ink">live.</span>
             </h1>
             <p className="font-serif text-xl leading-relaxed text-ink-muted">
-              MaPa summarizes phone-activity patterns to support a family check-in. The model cannot determine whether a person is safe or
-              needs help.
+              Explore the MaPa parent and family apps in Android emulators hosted by Limrun and streamed into this page. This is a live app
+              demo in cloud emulators, not a physical phone.
             </p>
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-[15px]">
+              <a href="https://github.com/shreyash-sharma/MaPa/releases/download/v0.1.0/MaPa-Parent-v0.1.0.apk" className="text-terracotta-ink underline underline-offset-4 hover:text-terracotta">Download Parent APK</a>
+              <a href="https://github.com/shreyash-sharma/MaPa/releases/download/v0.1.0/MaPa-Family-v0.1.0.apk" className="text-terracotta-ink underline underline-offset-4 hover:text-terracotta">Download Family APK</a>
+              <a href="https://github.com/shreyash-sharma/MaPa/releases/tag/v0.1.0" target="_blank" rel="noreferrer" className="text-ink-muted underline underline-offset-4 hover:text-ink">GitHub release notes</a>
+            </div>
+            <p className="text-sm text-ink-faint">Google Play submission is in progress.</p>
           </header>
 
           <DemoPlayers apps={APPS} />
@@ -56,8 +62,8 @@ export default function TryPage() {
             <div className="rounded-2xl border border-line-strong/60 bg-surface/70 p-6">
               <p className="text-[13px] text-ink-faint">Sample preview</p>
               <p className="mt-2 text-[15px] leading-relaxed text-ink-muted">
-                Limrun opens one debug build at a time in a cloud Android emulator. Sample mode bypasses sign-in and pairing. The screens show
-                the same fixed fictional story; they do not connect to a real family account.
+                Limrun opens each debug build in its own cloud Android emulator, so both apps can run side by side. Sample mode bypasses
+                sign-in and pairing. Both screens read the same model-derived dataset sample; they do not connect to a real family account.
               </p>
             </div>
             <div className="rounded-2xl border border-line-strong/60 bg-surface/70 p-6">

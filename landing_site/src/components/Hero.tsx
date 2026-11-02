@@ -340,10 +340,10 @@ export function Hero() {
 
           <div data-hero className="hero-fade mt-7 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <a
-              href="#access"
+              href="/try/"
               className="group inline-flex items-center gap-2.5 rounded-full bg-ink px-8 py-3.5 text-sm font-medium tracking-wide text-surface shadow-sm transition-all duration-300 hover:bg-terracotta active:scale-[0.98]"
             >
-              Get early access
+              Try live demo
               <span aria-hidden className="transition-transform duration-300 group-hover:translate-x-1">→</span>
             </a>
             <a href="#model-live" className="inline-flex min-h-11 items-center gap-1.5 px-4 text-base text-ink-muted transition-colors hover:text-ink">

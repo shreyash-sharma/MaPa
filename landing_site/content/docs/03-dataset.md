@@ -27,4 +27,4 @@ The published dataset description reports 4,230,516 train rows, 495,523 validati
 
 ## Rights and limits
 
-The real logs do not represent the full age range or routine diversity of intended users; widening them is part of the pilot. Source terms, attribution and redistribution permissions are checked per dataset before any data is published; no single blanket license covers every source and derived output. The web demo uses fictional example records only, and no real person's timeline is embedded in it.
+The real logs do not represent the full age range or routine diversity of intended users; widening them is part of the pilot. Source terms, attribution and redistribution permissions are checked per dataset before any data is published; no single blanket license covers every source and derived output. The web demo embeds one identity-free day from the frozen final-v2 training split with `model_derived` provenance. It is generated from models fitted to S3 and UbiqLog phone logs; it is not a real person's observed timeline. The same sample is shown in both app views. The demo does not send push notifications, calls, or messages.

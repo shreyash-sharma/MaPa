@@ -23,19 +23,16 @@ class ActiveDemo:
 
 
 class LimrunDemoSessions:
-    """Owns at most one public demo emulator in this single-container service."""
+    """Owns one concurrent emulator per demo app in this single-container service."""
 
-    def __init__(self, client: Any, assets: dict[str, str], access_code: str):
+    def __init__(self, client: Any, assets: dict[str, str]):
         self.client = client
         self.assets = assets
-        self.access_code = access_code
         self._lock = asyncio.Lock()
-        self._active: ActiveDemo | None = None
+        self._active: dict[str, ActiveDemo] = {}
         self._starts: dict[str, list[float]] = {}
 
-    async def start(self, request: Request, role: str, owner: str, access_code: str) -> dict[str, str]:
-        if not self.access_code or not hmac.compare_digest(access_code, self.access_code):
-            raise HTTPException(status_code=403, detail="Enter the judge access code to start the demo.")
+    async def start(self, request: Request, role: str, owner: str) -> dict[str, str]:
         if role not in self.assets:
             raise HTTPException(status_code=400, detail="Unknown demo app.")
         if len(owner) < 16 or len(owner) > 100:
@@ -45,10 +42,13 @@ class LimrunDemoSessions:
 
         async with self._lock:
             await self._discard_terminated()
-            if self._active:
-                if self._active.owner == owner and self._active.role == role:
-                    return self._response(self._active)
-                raise HTTPException(status_code=409, detail="A demo emulator is already in use. Stop it before starting another.")
+            current = self._active.get(role)
+            if current:
+                if current.owner == owner:
+                    return self._response(current)
+                raise HTTPException(status_code=409, detail="This app already has an active demo session. Stop it before starting another.")
+            if len(self._active) >= len(self.assets):
+                raise HTTPException(status_code=429, detail="All demo emulators are in use. Stop one and try again.")
 
             now = time.monotonic()
             recent = [stamp for stamp in self._starts.get(client_ip, []) if now - stamp < 600]
@@ -89,7 +89,7 @@ class LimrunDemoSessions:
                 websocket_url=instance.status.endpoint_web_socket_url,
                 token=instance.status.token,
             )
-            self._active = active
+            self._active[role] = active
             recent.append(now)
             self._starts[client_ip] = recent
             return self._response(active)
@@ -97,27 +97,26 @@ class LimrunDemoSessions:
     async def stop(self, request: Request, instance_id: str, session_key: str) -> dict[str, bool]:
         _require_same_origin(request)
         async with self._lock:
-            active = self._active
-            if not active or active.instance_id != instance_id or not hmac.compare_digest(active.session_key, session_key):
+            role = next((role for role, item in self._active.items() if item.instance_id == instance_id), None)
+            active = self._active.get(role) if role else None
+            if not active or not hmac.compare_digest(active.session_key, session_key):
                 return {"ok": True}
             try:
                 await self.client.android_instances.delete(active.instance_id)
             except Exception as error:
                 print(f"Limrun demo stop failed ({type(error).__name__}).")
                 raise HTTPException(status_code=503, detail="The emulator is stopping. It will also expire automatically.") from None
-            self._active = None
+            self._active.pop(active.role, None)
             return {"ok": True}
 
     async def _discard_terminated(self) -> None:
-        if not self._active:
-            return
-        try:
-            current = await self.client.android_instances.get(self._active.instance_id)
-        except Exception:
-            self._active = None
-            return
-        if current.status.state != "ready":
-            self._active = None
+        for role, active in list(self._active.items()):
+            try:
+                current = await self.client.android_instances.get(active.instance_id)
+            except Exception:
+                continue
+            if current.status.state != "ready":
+                self._active.pop(role, None)
 
     @staticmethod
     def _response(active: ActiveDemo) -> dict[str, str]:

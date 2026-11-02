@@ -35,7 +35,7 @@ try:
 except Exception:
     pass
 try:
-    _limrun = modal.Secret.from_name("limrun-demo")
+    _limrun = modal.Secret.from_name("custom-secret")
     limrun_secrets = [_limrun]
 except Exception:
     limrun_secrets = []
@@ -48,8 +48,8 @@ image = (
         "MAPA_LANGUAGES_FILE": "/config/languages.json",
         "MAPA_CATALOG": "/config/en.json",
         "MAPA_TRANSLATE": TRANSLATE,
-        "MAPA_LIMRUN_PARENT_ASSET": "mapa-parent-demo.apk",
-        "MAPA_LIMRUN_FAMILY_ASSET": "mapa-family-demo.apk",
+        "MAPA_LIMRUN_PARENT_ASSET": "mapa-parent-judge-demo-v2.apk",
+        "MAPA_LIMRUN_FAMILY_ASSET": "mapa-family-judge-demo-v2.apk",
     })
     .add_local_file(LANGUAGES, "/config/languages.json")
     .add_local_file(CATALOG, "/config/en.json")
@@ -98,7 +98,6 @@ def web():
                 "parent": os.environ["MAPA_LIMRUN_PARENT_ASSET"],
                 "family": os.environ["MAPA_LIMRUN_FAMILY_ASSET"],
             },
-            os.environ.get("MAPA_DEMO_ACCESS_CODE", ""),
         )
 
     return make_app(

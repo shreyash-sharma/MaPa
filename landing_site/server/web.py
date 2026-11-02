@@ -132,10 +132,9 @@ def make_app(
             return JSONResponse({"error": "Invalid demo request."}, status_code=400)
         role = body.get("role") if isinstance(body, dict) else None
         owner = body.get("owner") if isinstance(body, dict) else None
-        access_code = body.get("accessCode") if isinstance(body, dict) else None
-        if not isinstance(role, str) or not isinstance(owner, str) or not isinstance(access_code, str):
+        if not isinstance(role, str) or not isinstance(owner, str):
             return JSONResponse({"error": "Invalid demo request."}, status_code=400)
-        return await demo_sessions.start(request, role, owner, access_code)
+        return await demo_sessions.start(request, role, owner)
 
     @app.post("/api/demo/stop")
     async def stop_demo(request: Request) -> dict:
