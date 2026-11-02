@@ -29,7 +29,7 @@ Rule: every choice is made on the 39 validation people; the 39 test people are u
 (the next-bin and current-bin heads) on real observed days and generated parents' untouched days.
 Part of the inputs is hidden, as the release does now. Augmentation and similarity weights apply here.
 
-**Stage 2: learn "unusual" (labels).** The models then learn the unusual-quiet head on the injected
+**Stage 2: learn "unusual" (labels).** The models then learn the unusual-quiet head on the programmatically constructed
 episodes, with life-tag days left out. Positive weight as now (12). The real windows get day-swap copies.
 
 **Stage 3: the decision layer (same for every model).**
@@ -47,7 +47,7 @@ Transformer, CNN (`mapa_train/zoo.py`). The winner must run on the phone: causal
 and it must export to ExecuTorch.
 
 **Fairness checks:** 5 seeds per family (report the spread); hold one scenario out of training and
-check it on validation, so the model does not only learn how our injections look.
+check it on validation, so the model does not only learn how our scenario additions look.
 
 **Pass rule (the release gate C4):** fewer false alerts per person-week than the 4-hour rule and the
 statistics baseline, and at least their catch rate at every severity. Report failures too.
@@ -72,7 +72,7 @@ statistics baseline, and at least their catch rate at every severity. Report fai
 4. Choose on validation; test one time; export; check on the Pixel.
 
 ## 5. Risks
-- The labels are injected, not real events: a model can learn the injection shape. The scenario-held-out
+- The labels are programmatically constructed, not real events: a model can learn the scenario construction shape. The scenario-held-out
   check and the real_check people limit this; we say so in the paper.
 - Real days are few and mostly from younger people; the age layer is a US aggregate.
 - Stage 3 rules can hide a weak model; report the model alone and the full system separately.

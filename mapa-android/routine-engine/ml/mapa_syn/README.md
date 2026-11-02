@@ -1,6 +1,6 @@
 # MaPa-Syn v0.1 tooling
 
-Work in progress. The user-approved current phase ends at heartbeat/synthetic-base preparation and pauses before injection for review. See `data/MaPaData/logs/build-status.md` and `data/IMPLEMENTATION_DECISIONS.md`.
+Work in progress. The user-approved current phase ends at heartbeat/synthetic-base preparation and pauses before scenario construction for review. See `data/MaPaData/logs/build-status.md` and `data/IMPLEMENTATION_DECISIONS.md`.
 
 Run from `routine-engine/ml` with Python 3.11+. Current production acquisition/conversion use only the standard library; tests require pytest.
 
@@ -27,4 +27,4 @@ Later-stage CLI names are reserved but fail explicitly: their presence does not 
 
 Heartbeat probes retain only timestamp-derived counts, cadence and coverage. See `probes/heartbeat/<source>/people.csv` and `days.csv.gz` for every person/day. Full heartbeat means an event in all 15 distinct minutes, not merely one sample per bin. Complete inferred bins receive `observation_basis=heartbeat_inferred`; missing foreground records become zero only on these bins. Incomplete bins remain unknown. Candidate outputs are separate from the original conservative conversions. The episode schema now requires the same provenance field.
 
-Synthetic preparation uses NumPy and the existing unmodified `mapa_rhythm.synth.generate` with `with_events=False`. It writes new-seed base parents outside the code tree and does not generate episode files or replace existing harness data. `review_gate.json` blocks injection pending user review.
+Synthetic preparation uses NumPy and the existing unmodified `mapa_rhythm.synth.generate` with `with_events=False`. It writes new-seed base parents outside the code tree and does not generate episode files or replace existing harness data. `review_gate.json` blocks scenario construction pending user review.

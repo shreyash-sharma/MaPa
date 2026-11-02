@@ -29,7 +29,7 @@ These numbers are marked `ASSUMPTION` or `TUNED` in `calibration.py`.
   - naps
   - morning walks
   - phone left at home about once a week
-  - the injected 3 to 14 hour halts
+  - the programmatically constructed 3 to 14 hour halts
   - illness, travel, guests and festivals
   - plumbing outages
   - movement sensor available on 75% of phones and catching 50% to 90% of moving bins

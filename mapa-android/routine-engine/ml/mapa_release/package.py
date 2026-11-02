@@ -105,7 +105,7 @@ def stage_cards(name='cnn-v1',final_name='final'):
         for detector,metrics in results['methods'].items():
             rates=metrics['catch_rate_by_severity']
             result_table+=f"| {detector} | {metrics['false_alerts_per_person_week']:.6f} | {rates['mild']} | {rates['clear']} | {rates['severe']} |\n"
-        result_table+='\nExact numerator/denominator pairs, source groups, per-person false alerts and bootstrap intervals are in results.json. Untouched days and injected episodes have separate denominators.\n'
+        result_table+='\nExact numerator/denominator pairs, source groups, per-person false alerts and bootstrap intervals are in results.json. Untouched days and behavior-scenario windows have separate denominators.\n'
         result_table+='\n| Detector | Behaviour catches / positive episodes (scenarios 1–3) | Observation catches / positive episodes (7–10) |\n| --- | --- | --- |\n'
         for detector,metrics in results['methods'].items():
             behavior=[sum(metrics['by_scenario'][str(k)][j] for k in [1,2,3]) for j in [0,1]]
@@ -132,7 +132,7 @@ language:
 
 '''+CLAIM+'''
 
-This dataset contains observed strict-heartbeat bins from S3 and UbiqLog gen_fit people, model-derived parents, and injected disruptions with separate injected/expected labels. Logger heartbeat implies observation; it does not verify foreground permission or genuine non-use. Derived parents: 200 × 120 days, seed 20261101. The censored-KM generator was fitted only on release training people. The 11 real_check people are excluded from fitting and release.
+This dataset contains observed strict-heartbeat bins from S3 and UbiqLog gen_fit people, model-derived parents, and behavior scenarios programmatically added to timelines with separate change and expected-response labels. Logger heartbeat implies observation; it does not verify foreground permission or genuine non-use. Derived parents: 200 × 120 days, seed 20261101. The censored-KM generator was fitted only on release training people. The 11 real_check people are excluded from fitting and release.
 
 ## Fidelity against observed logs
 
@@ -145,23 +145,23 @@ Only the published unlock/day mean 28.7 and SD 21.4 from Shen et al., Innovation
 
 ## Episodes and evaluation limits
 
-Ten scenarios are injected into eligible strict real windows and derived timelines. Normal quiet is selected without changing counts. Routine shifts span seven days; life-tag days are excluded from model training. Missing bins are represented as explicit clock-grid tombstones with present=false and interactions=-1. Both labels remain on each episode row. The episode manifest reports real counts separately; unsupported real cells remain zero. Routine confirmation is not treated as a binary emergency catch. Test person groups and scenario definitions were frozen before release training. Untouched-day false alerts and injected catch rates are separate. All failures and trials are retained.
+Ten scenarios are programmatically added to eligible strict real windows and derived timelines. Normal quiet is selected without changing counts. Routine shifts span seven days; life-tag days are excluded from model training. Missing bins are represented as explicit clock-grid tombstones with present=false and interactions=-1. Both labels remain on each episode row. The episode manifest reports real counts separately; unsupported real cells remain zero. Routine confirmation is not treated as a binary emergency catch. Test person groups and scenario definitions were frozen before release training. Untouched-day false alerts and scenario-window detection rates are separate. All failures and trials are retained.
 
-No medical or safety claims. An injected disruption is not an observed emergency. No location, WiFi, Bluetooth, voice or raw app-name payloads are included. Licence text and attribution are saved per source. No eval-only source is redistributed.
+No medical or safety claims. A programmatically constructed behavior scenario is not an observed emergency. No location, WiFi, Bluetooth, voice or raw app-name payloads are included. Licence text and attribution are saved per source. No eval-only source is redistributed.
 
 ## Loading
 
 Run `python final/loader.py` to reload and verify the three Parquet splits. With Hugging Face Datasets, use `load_dataset("parquet", data_files={s: "final/"+s+".parquet" for s in ["train","val","test"]})`. Filter `subset` for observed, derived or episodes. Splits are by parent/person; episode variants stay with their parent. Never treat separate episodes from one parent as independent people. final/ is immutable; revisions go to final-v2/.
 '''
     data_card=data_card.replace('python final/loader.py',f'python {final_name}/loader.py').replace('"final/"+s',f'"{final_name}/"+s')
-    data_card+='\n## Field-level assumptions\n\nFor the observed subset, real_observed identifies the real interaction-count stream and heartbeat timing, not independently measured hardware telemetry. Healthy phone/permission/network flags are harness assumptions based on strict logger coverage. Charging follows the harness night mask and battery defaults to 80; these are control placeholders, not source battery/charging measurements. Injected monitoring faults alter those controls explicitly. Do not use these fields as evidence of real device health, location, or personal safety.\n'
+    data_card+='\n## Field-level assumptions\n\nFor the observed subset, real_observed identifies the real interaction-count stream and heartbeat timing, not independently measured hardware telemetry. Healthy phone/permission/network flags are harness assumptions based on strict logger coverage. Charging follows the harness night mask and battery defaults to 80; these are control placeholders, not source battery/charging measurements. Programmatically constructed observation-fault scenarios alter those controls explicitly. Do not use these fields as evidence of real device health, location, or personal safety.\n'
     data_card+='\nStreaming state resets at day boundaries to match training and evaluation. The default Hugging Face configuration selects the current frozen version; observed, derived and episodes are separate configurations, each retaining the same person splits.\n'
     (dataset/'README.md').write_text(data_card+result_table,encoding='utf-8')
     paired=ROOT/'paired-input-audit.json'
     if paired.exists():
         audit=read_json(paired)
         with (dataset/'README.md').open('a',encoding='utf-8') as stream:
-            stream.write('\n## Known paired-label limitation\n\nThe count/observation inputs are unchanged from the untouched parent in '+str(audit['train']['unchanged_count_observation_inputs'])+' of '+str(audit['train']['positive_behaviour_episodes'])+' original-v1 training positives and '+str(audit['val']['unchanged_count_observation_inputs'])+' of '+str(audit['val']['positive_behaviour_episodes'])+' validation positives. Applying a zeroing transform can be a no-op on already quiet windows. These cases remain disclosed in paired-input-audit.json; no frozen records or test labels were removed to improve scores. Injected stationary movement is an assumption and is not an input to the released behaviour classifier.\n')
+            stream.write('\n## Known paired-label limitation\n\nThe count/observation inputs are unchanged from the untouched parent in '+str(audit['train']['unchanged_count_observation_inputs'])+' of '+str(audit['train']['positive_behaviour_episodes'])+' original-v1 training positives and '+str(audit['val']['unchanged_count_observation_inputs'])+' of '+str(audit['val']['positive_behaviour_episodes'])+' validation positives. Applying a zeroing transform can be a no-op on already quiet windows. These cases remain disclosed in paired-input-audit.json; no frozen records or test labels were removed to improve scores. Stationary movement in behavior-scenario construction is an assumption and is not an input to the released behavior classifier.\n')
         shutil.copy2(paired,dataset/paired.name)
     model_card='''---
 license: cc-by-4.0
@@ -171,9 +171,9 @@ library_name: pytorch
 
 '''+CLAIM+'''
 
-Causal CNN pretrained on real observed bins with masked-bin and next-bin objectives, then trained on derived parents and labelled episodes. Training excludes real_check and all validation/test people. The 18-feature streaming interface and existing ExecuTorch CNN export path are retained. This is a multitask release head: output 0 predicts next-bin use, output 1 reconstructs masked current-bin use, output 2 predicts injected unusual inactivity, outputs 3–15 are reserved. It must not be substituted for the older 16-horizon hazard model without updating the consumer. Availability, night and life-tag guards are required; neural logits must never override missing-observation status.
+Causal CNN pretrained on real observed bins with masked-bin and next-bin objectives, then trained on derived parents and labeled episodes. Training excludes real_check and all validation/test people. The 18-feature streaming interface and existing ExecuTorch CNN export path are retained. This is a multitask release head: output 0 predicts next-bin use, output 1 reconstructs masked current-bin use, output 2 predicts unusual inactivity in a constructed behavior-scenario window, outputs 3–15 are reserved. It must not be substituted for the older 16-horizon hazard model without updating the consumer. Availability, night and life-tag guards are required; neural logits must never override missing-observation status.
 
-The chosen threshold was selected on validation only. Test results, including failures, are in results.json. False-alert denominators use observed daytime exposure, not elapsed missing time. Results on injected data do not establish performance on real emergencies. No medical or safety claims. Source and calibration limitations are in the dataset card. Training logs, parameters and export parity are included.
+The chosen threshold was selected on validation only. Test results, including failures, are in results.json. False-alert denominators use observed daytime exposure, not elapsed missing time. Results on programmatically added behavior scenarios do not establish performance on real emergencies. No medical or safety claims. Source and calibration limitations are in the dataset card. Training logs, parameters and export parity are included.
 
 Load the PyTorch checkpoint with the bundled model source and `torch.load(..., weights_only=False)` only for this trusted local artifact. The ExecuTorch program uses `(x[1,18], state[1,S])` and returns `(logits[1,16], next_state[1,S])`. State size and parity errors are in export-report.json.
 '''
@@ -203,7 +203,7 @@ Load the PyTorch checkpoint with the bundled model source and `torch.load(..., w
     for source in ['s3','ubiqlog']:
         license_dir=dataset/'licenses';license_dir.mkdir(exist_ok=True)
         shutil.copy2(data_root()/'raw'/source/'LICENCE.txt',license_dir/f'{source}-CC-BY-4.0.txt')
-    (dataset/'ATTRIBUTION.md').write_text('S3 Dataset — Juan Manuel Espin Lopez, Alberto Huertas Celdran, Javier G. Marin-Blazquez, Francisco Esquembre Martinez and Gregorio Martinez Perez — https://doi.org/10.6084/m9.figshare.14410229.v2 — CC BY 4.0.\nRawassizadeh, R. (2013). UbiqLog (smartphone lifelogging). UCI Machine Learning Repository. https://doi.org/10.24432/C55327 — CC BY 4.0.\nChanges: direct identifiers/private payloads removed; relative time, strict heartbeat inference, aggregation, statistical modelling and injected variants.\n',encoding='utf-8')
+    (dataset/'ATTRIBUTION.md').write_text('S3 Dataset — Juan Manuel Espin Lopez, Alberto Huertas Celdran, Javier G. Marin-Blazquez, Francisco Esquembre Martinez and Gregorio Martinez Perez — https://doi.org/10.6084/m9.figshare.14410229.v2 — CC BY 4.0.\nRawassizadeh, R. (2013). UbiqLog (smartphone lifelogging). UCI Machine Learning Repository. https://doi.org/10.24432/C55327 — CC BY 4.0.\nChanges: direct identifiers/private payloads removed; relative time, strict heartbeat inference, aggregation, statistical modelling and programmatically added behavior-scenario variants.\n',encoding='utf-8')
     for filename in ['fidelity.json','protocol.json']:
         shutil.copy2(ROOT/filename,dataset/filename)
     if (ROOT/'all-real-privacy-check.json').exists():shutil.copy2(ROOT/'all-real-privacy-check.json',dataset/'all-real-privacy-check.json')

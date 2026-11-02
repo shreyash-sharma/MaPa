@@ -65,7 +65,7 @@ def finish():
     write_json(folder/'SHA256.json',{str(p.relative_to(folder)):sha256(p) for p in sorted(folder.rglob('*'))
         if p.is_file() and p.name!='SHA256.json' and '__pycache__' not in p.parts})
     for relative,digest in read_json(folder/'SHA256.json').items():assert sha256(folder/relative)==digest
-    summary='Dataset-only deliverable ready. Active final-v2/: train 4,230,516 rows / 162 people; val 495,523 / 39; test 492,687 / 39. Observed: 10,150 bins; derived: 200 parents × 120 days; all ten injected scenarios retained. Person separation, provenance, licences, forbidden-field scan, all HF configurations, loader, frozen manifests and payload hashes verified. C4 and model delivery deferred at user request, not marked passing. No upload or email. Known fidelity and paired-label limitations remain in the card.'
+    summary='Dataset-only deliverable ready. Active final-v2/: train 4,230,516 rows / 162 people; val 495,523 / 39; test 492,687 / 39. Observed: 10,150 bins; derived: 200 parents × 120 days; all ten programmatically added scenarios retained. Person separation, provenance, licences, forbidden-field scan, all HF configurations, loader, frozen manifests and payload hashes verified. C4 and model delivery deferred at user request, not marked passing. No upload or email. Known fidelity and paired-label limitations remain in the card.'
     (ROOT/'FINAL-SUMMARY.md').write_text(summary+'\n',encoding='utf-8')
     (ROOT/'huggingface/RELEASE_STATUS.md').write_text(summary+'\n\nMaPa-Rhythm/ is the dataset deliverable. MaPa-Rhythm-Base/ remains an unfinished diagnostic draft and is not part of this delivery.\n',encoding='utf-8')
     progress(summary)
