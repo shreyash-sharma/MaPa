@@ -95,8 +95,7 @@ export function EarlyAccess() {
           <p data-reveal className="font-mono text-xs tracking-wide text-terracotta-glow">Early access</p>
           <h2 data-reveal className="font-display text-5xl font-normal leading-[1.02] sm:text-7xl lg:text-8xl">A calmer way to stay close.</h2>
           <p data-reveal className="mx-auto max-w-xl font-serif text-xl font-light leading-relaxed text-nocturne-muted">
-            No hardware to ship. You set it up, your parent taps Yes. Be among the first families, in India and abroad, to try
-            MaPa.
+            No hardware to ship. You set it up, your parent taps Yes. Be among the first families to try MaPa.
           </p>
         </div>
 

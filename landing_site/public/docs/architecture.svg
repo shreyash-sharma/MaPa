@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 440" role="img" aria-labelledby="title desc" font-family="system-ui, sans-serif">
+  <title id="title">MaPa activity scoring and family summary flow</title>
+  <desc id="desc">Phone activity features are scored on the parent phone. A status and summary can be shared with a family member. Missing updates are shown as unavailable.</desc>
+  <rect width="1000" height="440" rx="24" fill="#FCF9F4"/>
+  <g fill="#F6F3EE" stroke="#D9D3CB" stroke-width="2">
+    <rect x="36" y="56" width="420" height="326" rx="20"/>
+    <rect x="584" y="56" width="380" height="326" rx="20"/>
+  </g>
+  <text x="64" y="96" font-size="22" font-weight="700" fill="#1C1C19">Phone owner's device</text>
+  <text x="64" y="142" font-size="16" fill="#1C1C19">Permitted phone-activity signals</text>
+  <text x="64" y="168" font-size="14" fill="#4B4640">21 inputs, summarized in 15-minute steps</text>
+  <text x="64" y="218" font-size="16" fill="#1C1C19">MaPa Rhythm Hybrid + personal policy</text>
+  <text x="64" y="244" font-size="14" fill="#4B4640">Scores routine differences using personal history</text>
+  <text x="64" y="294" font-size="16" fill="#1C1C19">Status and short summary</text>
+  <text x="64" y="320" font-size="14" fill="#4B4640">Stale input → “Monitoring unavailable”</text>
+  <text x="612" y="96" font-size="22" font-weight="700" fill="#1C1C19">Family member's view</text>
+  <text x="612" y="150" font-size="16" fill="#1C1C19">Shared status and daily context</text>
+  <text x="612" y="178" font-size="14" fill="#4B4640">A prompt for a thoughtful check-in</text>
+  <text x="612" y="232" font-size="14" fill="#4B4640">Not a health or safety assessment</text>
+  <defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#A23E18"/></marker></defs>
+  <line x1="456" y1="220" x2="578" y2="220" stroke="#A23E18" stroke-width="3" marker-end="url(#arrow)"/>
+  <text x="464" y="202" font-size="13" fill="#A23E18">shared summary</text>
+</svg>

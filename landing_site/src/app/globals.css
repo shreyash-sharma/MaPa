@@ -130,6 +130,178 @@
   margin: -0.04em -0.12em -0.2em;
 }
 
+/* Technical docs: the approved markdown, set in the site's paper-and-ink style. */
+.doc-prose {
+  max-width: 46rem;
+  color: var(--color-ink-muted);
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+.doc-prose > * + * {
+  margin-top: 1.1em;
+}
+.doc-prose h2,
+.doc-prose h3 {
+  position: relative;
+  color: var(--color-ink);
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  scroll-margin-top: 5.5rem;
+}
+.doc-prose h2 {
+  margin-top: 2.4em;
+  padding-top: 1.2em;
+  border-top: 1px solid color-mix(in srgb, var(--color-line-strong) 50%, transparent);
+  font-size: 2.1rem;
+  line-height: 1.1;
+}
+.doc-prose h3 {
+  margin-top: 1.8em;
+  font-size: 1.5rem;
+}
+.doc-anchor {
+  position: absolute;
+  left: -1.1em;
+  color: var(--color-terracotta);
+  opacity: 0;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+.doc-prose h2:hover .doc-anchor,
+.doc-prose h3:hover .doc-anchor {
+  opacity: 1;
+}
+.doc-prose strong {
+  color: var(--color-ink);
+  font-weight: 400;
+  font-style: italic;
+}
+.doc-prose a {
+  color: var(--color-terracotta-ink);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--color-terracotta) 40%, transparent);
+  text-underline-offset: 0.2em;
+}
+.doc-prose a:hover {
+  text-decoration-color: currentColor;
+}
+.doc-prose code {
+  border-radius: 0.35rem;
+  background: var(--color-surface-warm);
+  padding: 0.05em 0.35em;
+  color: var(--color-ink);
+  font-size: 0.92em;
+}
+.doc-prose ul,
+.doc-prose ol {
+  padding-left: 1.3em;
+}
+.doc-prose ul {
+  list-style: disc;
+}
+.doc-prose ol {
+  list-style: decimal;
+}
+.doc-prose li + li {
+  margin-top: 0.5em;
+}
+.doc-prose li::marker {
+  color: var(--color-terracotta);
+}
+
+.doc-table {
+  margin-block: 1.6em;
+  overflow-x: auto;
+  border: 1px solid color-mix(in srgb, var(--color-line-strong) 60%, transparent);
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--color-surface) 70%, transparent);
+}
+.doc-table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+.doc-table th {
+  border-bottom: 1px solid var(--color-line-strong);
+  padding: 0.8rem 1rem;
+  color: var(--color-ink-faint);
+  font-size: 0.82rem;
+  font-weight: 400;
+  text-align: left;
+  white-space: nowrap;
+}
+.doc-table td {
+  border-top: 1px solid color-mix(in srgb, var(--color-line-strong) 35%, transparent);
+  padding: 0.75rem 1rem;
+  vertical-align: top;
+  font-variant-numeric: tabular-nums;
+}
+.doc-table td:first-child {
+  color: var(--color-ink);
+}
+/* On a phone each row becomes a small labelled card, so no table has to scroll sideways. */
+@media (max-width: 640px) {
+  .doc-table {
+    border: 0;
+    background: none;
+  }
+  .doc-table thead {
+    display: none;
+  }
+  .doc-table tr {
+    display: block;
+    margin-bottom: 0.75rem;
+    border: 1px solid color-mix(in srgb, var(--color-line-strong) 60%, transparent);
+    border-radius: 1rem;
+    background: color-mix(in srgb, var(--color-surface) 70%, transparent);
+    padding: 0.4rem 0;
+  }
+  .doc-table td {
+    display: grid;
+    grid-template-columns: minmax(7rem, 40%) 1fr;
+    gap: 0.75rem;
+    border: 0;
+    padding: 0.45rem 1rem;
+    text-align: left !important;
+  }
+  .doc-table td::before {
+    content: attr(data-label);
+    color: var(--color-ink-faint);
+    font-size: 0.82rem;
+  }
+  .doc-table td:first-child {
+    font-size: 1.05rem;
+  }
+}
+
+.doc-figure {
+  margin-block: 2em;
+}
+.doc-figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid color-mix(in srgb, var(--color-line-strong) 60%, transparent);
+  border-radius: 1rem;
+  background: var(--color-surface);
+}
+.doc-figure figcaption {
+  margin-top: 0.75rem;
+  color: var(--color-ink-faint);
+  font-size: 0.92rem;
+  font-style: italic;
+  line-height: 1.55;
+}
+.doc-figure .doc-full {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  font-style: normal;
+  white-space: nowrap;
+}
+
 /* A bundled translation is a quick fetch away; hold the page back briefly rather than flash English. */
 .i18n-pending body {
   visibility: hidden;

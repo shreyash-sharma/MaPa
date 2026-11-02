@@ -13,15 +13,15 @@ import "./globals.css";
 import { LanguageLayer } from "@/components/LanguageLayer";
 import i18n from "@/i18n/languages.json";
 
-// Runs before React: picks the language (?lang=, a saved choice, then the browser's languages) so the page can
-// hold back a bundled translation for a moment instead of flashing English. Never blocks for more than 2.5 s.
+// Runs before React: English unless the visitor asked for another language (?lang= or the picker, which is
+// remembered), so a bundled translation can be held back a moment instead of flashing English. Never blocks for
+// more than 2.5 s.
 const chooseLanguage = `(function(){var d=document.documentElement;d.classList.add('js');try{
 var ok=${JSON.stringify(["en", ...i18n.bundled, ...i18n.live])},bundled=${JSON.stringify(i18n.bundled)};
 var p=new URLSearchParams(location.search);if(p.get('i18n'))d.setAttribute('data-i18n',p.get('i18n'));
 var q=p.get('lang');if(q){q=q.toLowerCase().split('-')[0];localStorage.setItem('mapa-lang',q)}
 var c=q||localStorage.getItem('mapa-lang');
-if(!c){var n=navigator.languages||[navigator.language||'en'];for(var i=0;i<n.length;i++){var b=String(n[i]).toLowerCase().split('-')[0];if(ok.indexOf(b)>=0){c=b;break}}}
-if(!c||ok.indexOf(c)<0||d.getAttribute('data-i18n')==='harvest')c='en';
+if(!c||ok.indexOf(c)<0||d.getAttribute('data-i18n')==='harvest'||/^\\/(docs|try)(\\/|$)/.test(location.pathname))c='en';
 d.setAttribute('data-lang',c);
 if(bundled.indexOf(c)>=0){d.classList.add('i18n-pending');setTimeout(function(){d.classList.remove('i18n-pending')},2500)}
 }catch(e){}})();`;
@@ -46,7 +46,6 @@ export const metadata: Metadata = {
   title: "MaPa — A calm daily picture of your parent's day",
   description:
     "MaPa learns your parent's own daily rhythm on their phone and gives the family a calm picture they can glance at. Only conclusions leave the phone.",
-  icons: { icon: "/mapa-emblem-hd.png" },
   openGraph: {
     title: "MaPa — A calm daily picture of your parent's day",
     description:

@@ -1,12 +1,15 @@
 import Image from "next/image";
+import Link from "next/link";
 import { site } from "@/lib/site";
 
 const LINKS = [
-  { href: "#model-live", label: "The model, live" },
-  { href: "#learn", label: "How it learns" },
-  { href: "#model", label: "The model" },
-  { href: "#privacy", label: "Privacy" },
-  { href: "#faq", label: "FAQ" },
+  { href: "/#model-live", label: "The model, live" },
+  { href: "/#learn", label: "How it learns" },
+  { href: "/#model", label: "The model" },
+  { href: "/#privacy", label: "Privacy" },
+  { href: "/#faq", label: "FAQ" },
+  { href: "/docs/", label: "Documentation" },
+  { href: "/try/", label: "Try the demo" },
 ];
 
 export function Footer() {
@@ -28,9 +31,9 @@ export function Footer() {
             <ul>
               {LINKS.map((l) => (
                 <li key={l.href}>
-                  <a href={l.href} className="inline-flex min-h-11 items-center transition-colors hover:text-nocturne-ink">
+                  <Link href={l.href} className="inline-flex min-h-11 items-center transition-colors hover:text-nocturne-ink">
                     {l.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>

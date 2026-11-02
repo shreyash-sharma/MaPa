@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import config from "@/i18n/languages.json";
 import { applyAttr, applyUnit, attrKeys, idOf, rootOf, unitOf, units, written, writtenAttrs, ATTRS, type Dict } from "@/i18n/dom";
@@ -142,6 +143,7 @@ async function live(lang: string, onProgress: (done: number, total: number) => v
 export function LanguageLayer() {
   const [lang, setLang] = useState("en");
   const [status, setStatus] = useState<Status>(null);
+  const pathname = usePathname();
 
   useEffect(() => {
     const html = document.documentElement;
@@ -190,7 +192,7 @@ export function LanguageLayer() {
     // A bundled file that is missing (not generated yet) falls back to the live path rather than to English.
     fetch(`/i18n/${code}.json`)
       .then((r) => (r.ok ? r.json() : Promise.reject()))
-      .then((data) => ready(data.strings, "Translated by Meta’s Muse Spark Open"))
+      .then((data) => ready(data.strings, data.edited ? "Translated by Meta’s Muse Spark Open, with edits by the MaPa team" : "Translated by Meta’s Muse Spark Open"))
       .catch(goLive);
   }, []);
 
@@ -204,6 +206,9 @@ export function LanguageLayer() {
   };
 
   const others = config.live.map((code) => [code, LANGS[code]] as const);
+
+  // The docs and the demo page are in English only; their text is not in the translation catalog.
+  if (/^\/(docs|try)(\/|$)/.test(pathname ?? "")) return null;
 
   return (
     <div translate="no" className="fixed right-3 bottom-3 z-[120] flex max-w-[min(92vw,22rem)] flex-col items-end gap-1.5 font-serif">

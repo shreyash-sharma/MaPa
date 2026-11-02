@@ -16,8 +16,13 @@ const CONTRAST = [
   },
 ];
 
-const STAYS = ["Raw usage", "App names", "Messages", "Location", "Audio", "Screen contents"];
-const SHARED = ["The state: Active, Quiet, Unusual, Monitoring unavailable or Paused by parent", "The expected-activity forecast", "The daily note, written from a short summary"];
+const STAYS = ["Which apps are used", "Messages and calls", "Photos", "Location (MaPa never uses GPS)", "Camera and microphone", "Anything on the screen"];
+const SHARED = [
+  "The state: Active, Quiet, Unusual, Monitoring unavailable or Paused by parent",
+  "When the phone was last used (the time only)",
+  "Whether today looks like the usual day, and the battery level",
+  "A daily note, written from a short summary without the parent’s name",
+];
 
 const TENETS = [
   { title: "I — On the phone", body: "The rhythm model runs on your parent’s phone. Only conclusions leave it." },
@@ -48,7 +53,7 @@ export function Charter() {
               The difference between watching and caring is not technical. It is a choice about what to look at.
             </p>
             <p data-reveal className="hairline-t pt-4 font-serif text-sm italic text-ink-muted">
-              “At 06:45 on the veranda, the tea cools in brass cups. No cameras. No wristband alarms. Only a day beginning.”
+              “At 7:40 the phone wakes on the bedside table. No cameras. No wristband alarms. Only a day beginning.”
             </p>
           </div>
 

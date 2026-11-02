@@ -6,7 +6,7 @@
 
 **A small AI model on your parent's phone learns their daily rhythm.<br>You see one calm picture of their day, and hear the same day when it looks different.**
 
-[**Watch the demo**](#) · [Landing page](#) · [Try the APKs](#try-it-in-2-minutes) · [Model card](models/MODEL_CARD.md) · [Dataset card](data-card/DATASET_CARD.md)
+[Landing page](https://shreyash-sharma--mapa-web-web.us-east.modal.run/) · [Technical docs and results](https://shreyash-sharma--mapa-web-web.us-east.modal.run/docs/) · [Judge demo status](https://shreyash-sharma--mapa-web-web.us-east.modal.run/try/) · [Try the APKs](#try-it-in-2-minutes) · [Model card](models/MODEL_CARD.md) · [Dataset card](data-card/DATASET_CARD.md)
 
 ![tests](https://github.com/shreyash-sharma/MaPa/actions/workflows/tests.yml/badge.svg) ![License](https://img.shields.io/badge/license-Apache--2.0-2F6E4A) ![Android](https://img.shields.io/badge/Android-Kotlin%20%2B%20Compose-1C1C19) ![ExecuTorch](https://img.shields.io/badge/Meta-ExecuTorch-A23E18) ![Muse Spark](https://img.shields.io/badge/Meta-Muse%20Spark%20via%20Baseten-A23E18) ![Model](https://img.shields.io/badge/model-9%2C594%20parameters-55657A)
 
@@ -18,9 +18,12 @@
 |---|---|
 | **Idea** | Each parent's phone scores that parent's own rhythm, starting from a population profile, with a 12-hour observed-quiet backstop. |
 | **Model** | Our 9,594-parameter model (CNN + GRU + 30-day LSTM), trained from scratch, exported to ExecuTorch and wired into the Android app. On-device runtime is not yet verified. |
-| **Current evaluation** | V2 decision policy: 1.09 false alerts per observed person-week; 50/50 mild, 33/33 clear, and 25/25 severe behavior scenarios detected on a fresh 40-parent derived cohort. |
+| **Current evaluation** | v2 decision policy: 1.0938 false alerts per observed person-week; policy alerts in 50/50 mild, 33/33 clear, and 25/25 severe labeled windows on 40 new-seed model-derived timelines. |
+| **Hard-negative result** | 141/492 expected-none windows (28.66%) had an alert. Daytime inactivity and phone-left-home windows each had a 100% alert rate. |
 | **App build** | Signed parent and family release APKs are available in [GitHub Releases](https://github.com/shreyash-sharma/MaPa/releases). Firebase credentials are not included in the source repository. |
 | **Meta** | ExecuTorch/XNNPACK for the Android inference path; Muse Spark via Baseten for family-app text features. |
+
+The 108/108 behavior-case window count includes 28 windows where the case produced no change in phone-use or observation inputs. These are controlled results on model-derived data, not real-world event detection. See the [full evaluation](landing_site/content/docs/04-results.md) for the case breakdown and limits.
 
 <div align="center">
 <img src="assets/tour.gif" width="260" alt="A tour of the family and parent apps (sample data)"><br>
