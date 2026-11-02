@@ -11,8 +11,6 @@ tags:
 - derived
 task_categories:
 - time-series-forecasting
-language:
-- en
 configs:
 - config_name: all
   default: true
