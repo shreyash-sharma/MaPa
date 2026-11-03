@@ -4,6 +4,7 @@ Meta's stack, end to end: a compact model exported with ExecuTorch for the phone
 
 - **ExecuTorch** is the export path for the compact phone model. ExecuTorch artifacts exist for the trained checkpoint and the Android integration is built; end-to-end v2 parity and real-device performance are the next measurements.
 - **Muse Spark Open**, served through Baseten, writes the optional family-app text from short, name-free summaries. It is not part of parent-phone scoring. On this website it also translates the page live, behind a language allowlist, per-visitor limits and a monthly token cap.
+- **Five parent-app language choices:** English, Hindi, Marathi, Tamil, and French. The family selects a language in the invite; Muse Spark Open via Baseten translates parent-interface copy and the app caches it on the phone.
 - **Firebase** is configured for the Android project. Demo sign-in, pairing, access rules and sync are verified next in a dedicated demo environment before they are described as working.
 
 ## The full stack

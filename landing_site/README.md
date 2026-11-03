@@ -46,7 +46,9 @@ The page can switch language at runtime, without a rebuild.
 | --- | --- | --- |
 | Source | English | The text in the components |
 | Bundled | Hindi | Translated once by Muse Spark Open, saved in `public/i18n/hi.json` |
-| Live | Tamil, French | Translated by Muse Spark Open the first time someone picks them, then stored on the server for everyone after |
+| Live | Marathi, Tamil, French | Translated by Muse Spark Open the first time someone picks them, then stored on the server for everyone after |
+
+The Android parent invite offers the same five choices: English, Hindi, Marathi, Tamil, and French. Hindi is bundled in the app; Marathi, Tamil, and French interface copy is translated by Muse Spark Open through Baseten and cached on the parent's phone. The family member selects this language when sending the invite.
 
 The lists live in [`src/i18n/languages.json`](src/i18n/languages.json). Add a code to `live` to switch another language on.
 
