@@ -67,7 +67,7 @@ How it works:
    names, length) before it is kept; a string that fails stays English.
 
 Guards on the live path: only the listed languages, one job per language at a time, 4 new languages per visitor per hour,
-and a monthly cap of 200,000 tokens (about $0.85 at Baseten's $4.25 per million output tokens).
+and a monthly cap of 1,000,000 tokens, shared by site and parent-app translations.
 
 ### Commands
 

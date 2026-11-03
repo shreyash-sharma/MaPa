@@ -26,8 +26,8 @@ from limrun_demo import LimrunDemoSessions
 from stores import Store
 
 STARTS_PER_HOUR = int(os.environ.get("MAPA_STARTS_PER_HOUR", "4"))
-# About $0.85 a month at most at Muse Spark Open's output price ($4.25 per 1M tokens): two or three new languages.
-MONTHLY_TOKENS = int(os.environ.get("MAPA_MONTHLY_TOKENS", "200000"))
+# Bound the shared website and parent-app translation spend while allowing the expanded locale catalog to warm.
+MONTHLY_TOKENS = int(os.environ.get("MAPA_MONTHLY_TOKENS", "1000000"))
 
 
 def _segment_file(path: str) -> str | None:
