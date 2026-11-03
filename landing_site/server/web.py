@@ -178,7 +178,7 @@ def make_app(
     async def app_translation(lang: str, request: Request) -> JSONResponse:
         """Translate fixed parent-app interface copy. The app sends no names or telemetry."""
         lang = lang.lower()
-        if lang not in {"ta", "fr", "mr"} or i18n_core.language(lang) is None:
+        if lang in {"en", "hi"} or i18n_core.language(lang, parent_app=True) is None:
             return JSONResponse({"error": "unsupported language"}, status_code=404)
         if not enabled or store.tokens_this_month() >= MONTHLY_TOKENS:
             return JSONResponse({"error": "translation is unavailable"}, status_code=503)
@@ -200,7 +200,9 @@ def make_app(
         if cached:
             return JSONResponse({"translations": cached.get("translations", {})}, headers={"Cache-Control": "no-store"})
         try:
-            translated, stats = i18n_core.translate_catalog(source, lang, i18n_core.baseten_call(), workers=2)
+            translated, stats = i18n_core.translate_catalog(
+                source, lang, i18n_core.baseten_call(), workers=2, parent_app=True
+            )
             store.add_tokens(stats["tokens"])
             store.put(cache_key, lang, {"status": "complete", "translations": translated})
             return JSONResponse({"translations": translated}, headers={"Cache-Control": "no-store"})

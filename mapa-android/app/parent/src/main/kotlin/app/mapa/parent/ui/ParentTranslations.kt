@@ -43,7 +43,7 @@ internal object ParentTranslations {
         }
     }
 
-    private val liveLanguages = setOf(Lang.TA, Lang.FR, Lang.MR)
+    private val liveLanguages = Lang.entries.filter { it != Lang.EN && it != Lang.HI }.toSet()
 
     private fun read(context: Context, lang: Lang): Map<String, String> = runCatching {
         val values = JSONObject(context.getSharedPreferences(prefsName, Context.MODE_PRIVATE).getString(lang.code, "{}") ?: "{}")

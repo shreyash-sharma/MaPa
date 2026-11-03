@@ -98,6 +98,7 @@ class MainActivity : ComponentActivity() {
             Lang.FR -> "fr-FR"
             Lang.MR -> "mr-IN"
             Lang.EN -> "en-IN"
+            else -> lang.code
         })
         engine.speak(text, TextToSpeech.QUEUE_FLUSH, null, "mapa-onboarding")
     }

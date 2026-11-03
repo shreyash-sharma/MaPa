@@ -8,6 +8,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -30,6 +31,8 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
@@ -51,6 +54,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
@@ -66,6 +70,7 @@ import com.google.zxing.BarcodeFormat
 import com.google.zxing.qrcode.QRCodeWriter
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 /** The link a parent taps. A custom scheme until MaPa has a verified web domain for App Links. */
 fun inviteLink(code: String) = "mapa://join/$code"
@@ -82,6 +87,8 @@ fun AddParentScreen(text: FamilyText, onBack: () -> Unit, onHaveCode: () -> Unit
     var name by rememberSaveable { mutableStateOf("") }
     var relation by rememberSaveable { mutableStateOf("other") }
     var lang by rememberSaveable { mutableStateOf(text.lang.code) }
+    var languageQuery by rememberSaveable { mutableStateOf("") }
+    var languageMenuOpen by rememberSaveable { mutableStateOf(false) }
     var phone by rememberSaveable { mutableStateOf("") }
     var contactName by rememberSaveable { mutableStateOf("") }
     var myName by rememberSaveable { mutableStateOf(FamilyRepo.firstName ?: "") }
@@ -137,12 +144,36 @@ fun AddParentScreen(text: FamilyText, onBack: () -> Unit, onHaveCode: () -> Unit
                 Spacer(Modifier.height(Space.xl))
                 Text(text.theirLanguage, style = MaterialTheme.typography.titleSmall)
                 Spacer(Modifier.height(Space.s))
-                FlowRow(horizontalArrangement = Arrangement.spacedBy(Space.s), verticalArrangement = Arrangement.spacedBy(Space.s)) {
-                    Choice("English", lang == Lang.EN.code) { lang = Lang.EN.code }
-                    Choice("हिन्दी", lang == Lang.HI.code) { lang = Lang.HI.code }
-                    Choice("मराठी", lang == Lang.MR.code) { lang = Lang.MR.code }
-                    Choice("தமிழ்", lang == Lang.TA.code) { lang = Lang.TA.code }
-                    Choice("Français", lang == Lang.FR.code) { lang = Lang.FR.code }
+                val languages = remember {
+                    Lang.entries.sortedBy { Locale.forLanguageTag(it.code).getDisplayLanguage(Locale.ENGLISH) }
+                }
+                val selectedLanguage = languages.firstOrNull { it.code == lang } ?: Lang.EN
+                Box(Modifier.fillMaxWidth()) {
+                    OutlinedTextField(
+                        value = if (languageMenuOpen) languageQuery else languageLabel(selectedLanguage),
+                        onValueChange = { languageQuery = it; languageMenuOpen = true },
+                        label = { Text(text.theirLanguage) },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth().onFocusChanged { state ->
+                            if (state.isFocused && !languageMenuOpen) {
+                                languageQuery = ""
+                                languageMenuOpen = true
+                            }
+                        },
+                    )
+                    DropdownMenu(
+                        expanded = languageMenuOpen,
+                        onDismissRequest = { languageMenuOpen = false; languageQuery = "" },
+                        modifier = Modifier.heightIn(max = 360.dp),
+                    ) {
+                        languages.filter { languageLabel(it).contains(languageQuery, ignoreCase = true) }
+                            .forEach { choice ->
+                                DropdownMenuItem(
+                                    text = { Text(languageLabel(choice)) },
+                                    onClick = { lang = choice.code; languageMenuOpen = false; languageQuery = "" },
+                                )
+                            }
+                    }
                 }
                 Spacer(Modifier.height(Space.xl))
                 Text(text.theirNumber, style = MaterialTheme.typography.titleSmall)
@@ -223,6 +254,13 @@ private fun Choice(label: String, selected: Boolean, onClick: () -> Unit) {
             selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
         ),
     )
+}
+
+private fun languageLabel(lang: Lang): String {
+    val locale = Locale.forLanguageTag(lang.code)
+    val native = locale.getDisplayLanguage(locale).ifBlank { lang.code }
+    val english = locale.getDisplayLanguage(Locale.ENGLISH).ifBlank { lang.code }
+    return if (native.equals(english, ignoreCase = true)) english else "$native · $english"
 }
 
 private fun qrBitmap(content: String, px: Int): Bitmap {

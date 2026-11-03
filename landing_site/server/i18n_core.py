@@ -32,16 +32,21 @@ LANGUAGES = json.loads(LANGUAGES_FILE.read_text(encoding="utf-8"))
 Call = Callable[[list[dict], int], tuple[str, int]]
 
 
-def language(code: str) -> dict | None:
-    """A language we translate into. Only the bundled and live lists are switched on; add codes there to grow."""
+def language(code: str, *, parent_app: bool = False) -> dict | None:
+    """Return an enabled website language, or a parent-app language when requested."""
     enabled = set(LANGUAGES["bundled"]) | set(LANGUAGES.get("live", []))
+    if parent_app:
+        enabled |= set(LANGUAGES.get("parent_live", []))
     return LANGUAGES["languages"].get(code) if code in enabled else None
 
 
-def system_prompt(code: str) -> str:
-    lang = LANGUAGES["languages"][code]
+def system_prompt(code: str, *, parent_app: bool = False) -> str:
+    lang = language(code, parent_app=parent_app)
+    if lang is None:
+        raise ValueError(f"unsupported language: {code}")
     name, native = lang["name"], lang["native"]
-    return f"""You translate the website of MaPa into {name} ({native}).
+    surface = "parent app interface" if parent_app else "website"
+    return f"""You translate the {surface} of MaPa into {name} ({native}).
 MaPa is a privacy-first app for families who live apart from an ageing parent. A small model on the parent's own phone
 learns their daily rhythm, and the family gets a calm daily note, or an alert when a morning is much quieter than usual.
 
@@ -86,9 +91,9 @@ def parse_reply(text: str) -> dict:
     return data
 
 
-def translate_batch(code: str, batch: dict[str, str], call: Call) -> tuple[dict[str, str], int]:
+def translate_batch(code: str, batch: dict[str, str], call: Call, *, parent_app: bool = False) -> tuple[dict[str, str], int]:
     messages = [
-        {"role": "system", "content": system_prompt(code)},
+        {"role": "system", "content": system_prompt(code, parent_app=parent_app)},
         {"role": "user", "content": json.dumps(batch, ensure_ascii=False)},
     ]
     reply, tokens = call(messages, 16000)
@@ -106,9 +111,10 @@ def translate_catalog(
     call: Call,
     on_progress: Callable[[int, int], None] | None = None,
     workers: int = 4,
+    parent_app: bool = False,
 ) -> tuple[dict[str, str], dict]:
     """Translate every catalog string. Failures are retried once in smaller batches, then left out."""
-    if language(code) is None:
+    if language(code, parent_app=parent_app) is None:
         raise ValueError(f"unsupported language: {code}")
     items = list(strings.items())
     batches = [dict(items[i : i + BATCH]) for i in range(0, len(items), BATCH)]
@@ -118,7 +124,7 @@ def translate_catalog(
     def run(batches: list[dict[str, str]]) -> None:
         nonlocal tokens
         with ThreadPoolExecutor(max_workers=workers) as pool:
-            for good, used in pool.map(lambda b: translate_batch(code, b, call), batches):
+            for good, used in pool.map(lambda b: translate_batch(code, b, call, parent_app=parent_app), batches):
                 done.update(good)
                 tokens += used
                 if on_progress:

@@ -133,7 +133,7 @@ export function EarlyAccess() {
           {status.text}
         </p>
         <p data-reveal className="font-mono text-xs text-nocturne-faint">
-          <a href="https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B" target="_blank" rel="noreferrer" className="underline decoration-nocturne-faint underline-offset-2 hover:text-nocturne">Meta Muse Spark Open · trained on 100+ languages</a> · Live translation via Baseten
+          60 parent-app languages · <a href="https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B" target="_blank" rel="noreferrer" className="underline decoration-nocturne-faint underline-offset-2 hover:text-nocturne">Muse Spark Open · trained on 100+ languages</a> · Live via Baseten
         </p>
       </div>
     </section>

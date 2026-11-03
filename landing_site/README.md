@@ -49,7 +49,7 @@ The page can switch language at runtime, without a rebuild.
 | Bundled | Hindi | Translated once by Muse Spark Open, saved in `public/i18n/hi.json` |
 | Live | Marathi, Tamil, French | Translated by Muse Spark Open the first time someone picks them, then stored on the server for everyone after |
 
-The family invite carries the parent's language choice into the Android app. Muse Spark Open, served through Baseten, generates live parent-interface translations, which are cached on the parent's phone. MaPa's translation layer is built to extend across Muse Spark's multilingual reach.
+The family invite carries one of 60 language choices into the Android parent app. Muse Spark Open, served through Baseten, generates live parent-interface translations, which are cached on the parent's phone. The model was trained on data from more than 100 languages.
 
 The lists live in [`src/i18n/languages.json`](src/i18n/languages.json). Add a code to `live` to switch another language on.
 
