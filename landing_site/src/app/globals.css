@@ -90,6 +90,40 @@
     box-shadow: 0 -16px 36px -14px rgba(26, 24, 22, 0.14), 0 -6px 12px -6px rgba(26, 24, 22, 0.06);
   }
 
+  .github-glass {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    background:
+      linear-gradient(165deg, rgba(255, 255, 255, 0.19) 0%, rgba(255, 255, 255, 0.04) 32%, transparent 54%),
+      linear-gradient(135deg, #302e2b 0%, #161514 48%, #050505 100%);
+    -webkit-backdrop-filter: blur(16px) saturate(150%);
+    backdrop-filter: blur(16px) saturate(150%);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.32), inset 0 -1px 0 rgba(0, 0, 0, 0.8), 0 8px 22px rgba(34, 25, 20, 0.2);
+    transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+  }
+
+  .github-glass:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.48);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), inset 0 -1px 0 rgba(0, 0, 0, 0.8), 0 12px 28px rgba(34, 25, 20, 0.26);
+  }
+
+  .github-glass:focus-visible {
+    outline: 2px solid var(--color-terracotta-ink);
+    outline-offset: 4px;
+  }
+
+  @media (prefers-reduced-transparency: reduce) {
+    .github-glass {
+      background: linear-gradient(135deg, #302e2b, #050505);
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+    }
+  }
+
   .hairline-b { border-bottom: 1px solid rgba(206, 195, 175, 0.45); }
   .hairline-t { border-top: 1px solid rgba(206, 195, 175, 0.45); }
   .hairline-l { border-left: 1px solid rgba(206, 195, 175, 0.45); }
