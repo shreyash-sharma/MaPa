@@ -1,7 +1,7 @@
 package app.mapa.core.language
 
 enum class Lang(val code: String) {
-    EN("en"), HI("hi");
+    EN("en"), HI("hi"), TA("ta"), FR("fr"), MR("mr");
 
     companion object {
         fun of(code: String?): Lang = entries.firstOrNull { it.code == code } ?: EN
@@ -31,3 +31,7 @@ data class Person(val name: String, val role: Role) {
     /** Hindi respectful plural; feminine for mothers. "हो जाती हैं" vs "हो जाते हैं". */
     val hiFem get() = role == Role.MOTHER
 }
+
+/** Existing core templates are English/Hindi; live app labels are translated separately. */
+enum class BundledLang { EN, HI }
+fun Lang.coreTextLang(): BundledLang = if (this == Lang.HI) BundledLang.HI else BundledLang.EN

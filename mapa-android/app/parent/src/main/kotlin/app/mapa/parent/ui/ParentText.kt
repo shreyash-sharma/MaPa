@@ -6,8 +6,28 @@ import app.mapa.core.language.Lang
  * The parent app's words, in English and Hindi, kept in code so the language can switch
  * instantly during onboarding. Hindi needs a native-speaker review before launch.
  */
-class ParentText(val lang: Lang) {
-    private fun t(en: String, hi: String) = if (lang == Lang.HI) hi else en
+class ParentText(val lang: Lang, private val live: Map<String, String> = emptyMap()) {
+    private fun t(en: String, hi: String) = when (lang) {
+        Lang.HI -> hi
+        Lang.EN -> en
+        else -> live[en] ?: en
+    }
+
+    /** Fixed interface copy only. Dynamic names, times and activity summaries are not included. */
+    fun staticCatalog(): List<String> {
+        val found = linkedSetOf<String>()
+        fun add(value: Any?) {
+            when (value) {
+                is String -> if (value.any(Char::isLetter)) found += value
+                is Iterable<*> -> value.forEach(::add)
+                is Pair<*, *> -> { add(value.first); add(value.second) }
+            }
+        }
+        javaClass.declaredFields.forEach { field ->
+            if (!field.isSynthetic) runCatching { field.isAccessible = true; add(field.get(this)) }
+        }
+        return found.toList()
+    }
 
     val listen = t("Listen", "सुनें")
     val welcomeChip = t("Welcome", "स्वागत है")

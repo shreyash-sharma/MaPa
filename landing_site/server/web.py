@@ -8,6 +8,7 @@ and new work stops once the monthly token budget is spent; cached languages keep
 from __future__ import annotations
 
 import json
+import hashlib
 import os
 import time
 from pathlib import Path
@@ -172,6 +173,39 @@ def make_app(
             store.set_progress(version, lang, 0, len(catalog["strings"]))
             start_job(lang)
         return JSONResponse({"status": "pending", "done": 0, "total": len(catalog["strings"])}, status_code=202, headers={"Cache-Control": "no-store"})
+
+    @app.post("/api/app-translate/{lang}")
+    async def app_translation(lang: str, request: Request) -> JSONResponse:
+        """Translate fixed parent-app interface copy. The app sends no names or telemetry."""
+        lang = lang.lower()
+        if lang not in {"ta", "fr", "mr"} or i18n_core.language(lang) is None:
+            return JSONResponse({"error": "unsupported language"}, status_code=404)
+        if not enabled or store.tokens_this_month() >= MONTHLY_TOKENS:
+            return JSONResponse({"error": "translation is unavailable"}, status_code=503)
+        client = (request.headers.get("x-forwarded-for") or (request.client.host if request.client else "?")).split(",")[0].strip()
+        if not store.allow_start(client, STARTS_PER_HOUR):
+            return JSONResponse({"error": "too many translation requests"}, status_code=429)
+        try:
+            body = await request.json()
+            values = body.get("strings") if isinstance(body, dict) else None
+            if not isinstance(values, list) or not 1 <= len(values) <= 300:
+                raise ValueError("invalid strings")
+            if any(not isinstance(value, str) or not value.strip() or len(value) > 500 for value in values):
+                raise ValueError("invalid strings")
+        except Exception:
+            return JSONResponse({"error": "invalid translation request"}, status_code=400)
+        source = {str(index): value for index, value in enumerate(dict.fromkeys(values))}
+        cache_key = "parent-ui-" + hashlib.sha256((lang + json.dumps(source, ensure_ascii=False, sort_keys=True)).encode("utf-8")).hexdigest()
+        cached = store.get(cache_key, lang)
+        if cached:
+            return JSONResponse({"translations": cached.get("translations", {})}, headers={"Cache-Control": "no-store"})
+        try:
+            translated, stats = i18n_core.translate_catalog(source, lang, i18n_core.baseten_call(), workers=2)
+            store.add_tokens(stats["tokens"])
+            store.put(cache_key, lang, {"status": "complete", "translations": translated})
+            return JSONResponse({"translations": translated}, headers={"Cache-Control": "no-store"})
+        except Exception:
+            return JSONResponse({"error": "translation failed"}, status_code=502)
 
     if site_dir and Path(site_dir).exists():
         app.mount("/", SiteFiles(directory=site_dir, html=True), name="site")

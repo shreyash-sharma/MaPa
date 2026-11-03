@@ -1,11 +1,13 @@
 package app.mapa.core.cloud
 
 import app.mapa.core.language.ClaimsGuard
+import app.mapa.core.language.BundledLang
 import app.mapa.core.language.Clock
 import app.mapa.core.language.Lang
 import app.mapa.core.language.Note
 import app.mapa.core.language.NoteWriter
 import app.mapa.core.language.TextModel
+import app.mapa.core.language.coreTextLang
 
 /** One finished day of phone activity, as the parent's phone already shares it. No app names, no places. */
 data class WeekDay(
@@ -103,32 +105,32 @@ object AskMapa {
     }
 
     /** Added by the app, never by the model, so an old picture is never presented as current. */
-    private fun staleSuffix(f: AskFacts): String = if (!f.stale) "" else when (f.lang) {
-        Lang.EN -> " The phone has not sent an update recently, so this may not describe now."
-        Lang.HI -> " फ़ोन से हाल में कोई अपडेट नहीं आया, इसलिए यह अभी की स्थिति नहीं बता सकता।"
+    private fun staleSuffix(f: AskFacts): String = if (!f.stale) "" else when (f.lang.coreTextLang()) {
+        BundledLang.EN -> " The phone has not sent an update recently, so this may not describe now."
+        BundledLang.HI -> " फ़ोन से हाल में कोई अपडेट नहीं आया, इसलिए यह अभी की स्थिति नहीं बता सकता।"
     }
 
-    fun refusal(lang: Lang): String = when (lang) {
-        Lang.EN -> "I can only describe phone activity patterns. I cannot say how someone is doing, or whether they are well or safe. If you are worried, please call."
-        Lang.HI -> "मैं सिर्फ़ फ़ोन इस्तेमाल का पैटर्न बता सकता हूँ। किसी की सेहत या सुरक्षा के बारे में नहीं बता सकता। चिंता हो तो फ़ोन करें।"
+    fun refusal(lang: Lang): String = when (lang.coreTextLang()) {
+        BundledLang.EN -> "I can only describe phone activity patterns. I cannot say how someone is doing, or whether they are well or safe. If you are worried, please call."
+        BundledLang.HI -> "मैं सिर्फ़ फ़ोन इस्तेमाल का पैटर्न बता सकता हूँ। किसी की सेहत या सुरक्षा के बारे में नहीं बता सकता। चिंता हो तो फ़ोन करें।"
     }
 
     /** The floor: facts only, no model. */
     fun template(f: AskFacts): String {
         val seen = f.days.filter { it.firstUseMinute != null }
-        if (seen.isEmpty()) return when (f.lang) {
-            Lang.EN -> "There is no phone activity in the shared days yet."
-            Lang.HI -> "साझा किए गए दिनों में अभी फ़ोन इस्तेमाल नहीं दिखा।"
+        if (seen.isEmpty()) return when (f.lang.coreTextLang()) {
+            BundledLang.EN -> "There is no phone activity in the shared days yet."
+            BundledLang.HI -> "साझा किए गए दिनों में अभी फ़ोन इस्तेमाल नहीं दिखा।"
         }
         val median = seen.map { it.firstUseMinute!! }.sorted().let { it[it.size / 2] }
         val tagged = f.days.count { it.tags.isNotEmpty() }
-        return when (f.lang) {
-            Lang.EN -> buildString {
+        return when (f.lang.coreTextLang()) {
+            BundledLang.EN -> buildString {
                 append("Phone use showed on ${seen.size} of the last ${f.days.size} days, usually first around ${Clock.time(median, f.lang)}.")
                 if (tagged > 0) append(" $tagged of those days ${if (tagged == 1) "was" else "were"} marked as different.")
                 f.trendLines.firstOrNull()?.let { append(" ").append(it) }
             }
-            Lang.HI -> buildString {
+            BundledLang.HI -> buildString {
                 append("पिछले ${f.days.size} दिनों में से ${seen.size} दिन फ़ोन इस्तेमाल दिखा, आमतौर पर पहला इस्तेमाल लगभग ${Clock.time(median, f.lang)}।")
                 if (tagged > 0) append(" इनमें $tagged दिन अलग दिन के रूप में चिह्नित थे।")
                 f.trendLines.firstOrNull()?.let { append(" ").append(it) }

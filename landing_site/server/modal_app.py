@@ -80,7 +80,7 @@ def translate_job(lang: str) -> dict:
     return run_job(_store(), _catalog(), lang, i18n_core.baseten_call())
 
 
-@app.function(image=site_image, volumes={"/data": volume}, secrets=limrun_secrets, timeout=300, max_containers=1)
+@app.function(image=site_image, volumes={"/data": volume}, secrets=limrun_secrets + translation_secrets, timeout=300, max_containers=1)
 @modal.concurrent(max_inputs=40)
 @modal.asgi_app()
 def web():

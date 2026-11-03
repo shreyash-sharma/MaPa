@@ -1,6 +1,6 @@
 {
   "bundled": ["hi"],
-  "live": ["ta", "fr"],
+  "live": ["ta", "fr", "mr"],
   "languages": {
     "en": { "name": "English", "native": "English" },
     "hi": { "name": "Hindi", "native": "हिन्दी" },

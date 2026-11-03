@@ -11,6 +11,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import app.mapa.core.language.Lang
@@ -21,6 +22,8 @@ import app.mapa.shared.ui.MapaTheme
 import app.mapa.shared.ui.DemoRole
 import app.mapa.shared.ui.DemoAppScreen
 import java.util.Locale
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class MainActivity : ComponentActivity() {
     private var tts: TextToSpeech? = null
@@ -42,7 +45,14 @@ class MainActivity : ComponentActivity() {
                     var lang by remember { mutableStateOf(prefs.lang) }
                     var usage by remember { mutableStateOf(UsageProbe.hasAccess(this@MainActivity)) }
                     val code = pendingCode
-                    val text = remember(lang) { ParentText(lang) }
+                    var liveText by remember(lang) { mutableStateOf(ParentTranslations.cached(this@MainActivity, lang)) }
+                    LaunchedEffect(lang) {
+                        if (lang != Lang.EN && lang != Lang.HI) {
+                            val translated = withContext(Dispatchers.IO) { runCatching { ParentTranslations.fetch(this@MainActivity, lang) }.getOrDefault(emptyMap()) }
+                            if (translated.isNotEmpty()) liveText = translated
+                        }
+                    }
+                    val text = remember(lang, liveText) { ParentText(lang, liveText) }
                     val setLang = { l: Lang -> lang = l; prefs.lang = l }
                     when {
                         demoMode -> DemoAppScreen(DemoRole.PHONE_OWNER)
@@ -82,7 +92,13 @@ class MainActivity : ComponentActivity() {
     private fun speak(text: String, lang: Lang) {
         val engine = tts ?: return
         if (!ttsReady) return
-        engine.language = if (lang == Lang.HI) Locale.forLanguageTag("hi-IN") else Locale.forLanguageTag("en-IN")
+        engine.language = Locale.forLanguageTag(when (lang) {
+            Lang.HI -> "hi-IN"
+            Lang.TA -> "ta-IN"
+            Lang.FR -> "fr-FR"
+            Lang.MR -> "mr-IN"
+            Lang.EN -> "en-IN"
+        })
         engine.speak(text, TextToSpeech.QUEUE_FLUSH, null, "mapa-onboarding")
     }
 

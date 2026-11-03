@@ -137,9 +137,12 @@ fun AddParentScreen(text: FamilyText, onBack: () -> Unit, onHaveCode: () -> Unit
                 Spacer(Modifier.height(Space.xl))
                 Text(text.theirLanguage, style = MaterialTheme.typography.titleSmall)
                 Spacer(Modifier.height(Space.s))
-                Row(horizontalArrangement = Arrangement.spacedBy(Space.s)) {
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(Space.s), verticalArrangement = Arrangement.spacedBy(Space.s)) {
                     Choice("English", lang == Lang.EN.code) { lang = Lang.EN.code }
                     Choice("हिन्दी", lang == Lang.HI.code) { lang = Lang.HI.code }
+                    Choice("मराठी", lang == Lang.MR.code) { lang = Lang.MR.code }
+                    Choice("தமிழ்", lang == Lang.TA.code) { lang = Lang.TA.code }
+                    Choice("Français", lang == Lang.FR.code) { lang = Lang.FR.code }
                 }
                 Spacer(Modifier.height(Space.xl))
                 Text(text.theirNumber, style = MaterialTheme.typography.titleSmall)
