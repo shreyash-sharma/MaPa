@@ -21,7 +21,7 @@
 | **Current evaluation** | v2 decision policy: 1.0938 false alerts per observed person-week; policy alerts in 50/50 mild, 33/33 clear, and 25/25 severe labeled windows on 40 new-seed model-derived timelines. |
 | **Hard-negative result** | 141/492 expected-none windows (28.66%) had an alert. Daytime inactivity and phone-left-home windows each had a 100% alert rate. |
 | **App build** | Signed parent and family release APKs are available in [GitHub Releases](https://github.com/shreyash-sharma/MaPa/releases). Firebase credentials are not included in the source repository. |
-| **Languages** | Parent invites offer English, Hindi, Marathi, Tamil, and French. Muse Spark Open via Baseten provides live parent-interface translations; the selected language follows the invite. |
+| **Languages** | [Meta Muse Spark Open](https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B) was trained on data from 100+ languages and powers MaPa's live parent-interface translation through Baseten. Families choose the parent's language in the invite. |
 | **Meta** | ExecuTorch/XNNPACK for the Android inference path; Muse Spark via Baseten for family-app text features and live parent-interface translations. |
 
 The 108/108 behavior-case window count includes 28 windows where the case produced no change in phone-use or observation inputs. These are controlled results on model-derived data, not real-world event detection. See the [full evaluation](landing_site/content/docs/04-results.md) for the case breakdown and limits.
