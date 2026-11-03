@@ -17,6 +17,10 @@ val localProps = Properties().apply {
     rootProject.file(".env").takeIf { it.exists() }?.reader()?.use { load(it) }
 }
 fun secret(name: String): String = ((project.findProperty(name) as String?) ?: localProps.getProperty(name) ?: "").trim()
+val releaseSigningFile = File(System.getProperty("user.home"), ".android/mapa-release-signing.properties")
+val releaseSigning = Properties().apply {
+    if (releaseSigningFile.exists()) releaseSigningFile.inputStream().use(::load)
+}
 
 android {
     namespace = "app.mapa.family"
@@ -31,6 +35,16 @@ android {
     }
 
     flavorDimensions += "distribution"
+    if (releaseSigningFile.exists()) {
+        signingConfigs {
+            create("mapaRelease") {
+                storeFile = file(releaseSigning.getProperty("storeFile"))
+                storePassword = releaseSigning.getProperty("storePassword")
+                keyAlias = releaseSigning.getProperty("keyAlias")
+                keyPassword = releaseSigning.getProperty("keyPassword")
+            }
+        }
+    }
     productFlavors {
         create("play") {
             dimension = "distribution"
@@ -51,6 +65,7 @@ android {
             buildConfigField("String", "BASETEN_KEY", "\"${secret("mapa.basetenKey")}\"")
         }
         release {
+            if (releaseSigningFile.exists()) signingConfig = signingConfigs.getByName("mapaRelease")
             manifestPlaceholders["cleartext"] = "false"
             // Never a key in a release APK: the chat Cloud Function holds them.
             buildConfigField("String", "MUSE_SPARK_KEY", "\"\"")
