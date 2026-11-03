@@ -47,7 +47,7 @@ export default function TryPage() {
               <p className="mt-3 max-w-xl text-base leading-relaxed text-ink-muted">Papa accepts a family invitation in one step. The family app explores Ma's 7-day and Papa's 30-day histories.</p>
             </div>
             <div className="flex justify-center md:col-start-2 md:row-start-1">
-              <a href="https://github.com/shreyash-sharma/MaPa/releases/tag/v0.3.0" target="_blank" rel="noreferrer" aria-label="Download Android APKs on GitHub" className="github-glass inline-flex min-h-12 items-center justify-center gap-2.5 rounded-full px-6 text-sm font-medium">
+              <a href="https://github.com/shreyash-sharma/MaPa/releases/tag/v0.3.1" target="_blank" rel="noreferrer" aria-label="Download Android APKs on GitHub" className="github-glass inline-flex min-h-12 items-center justify-center gap-2.5 rounded-full px-6 text-sm font-medium">
                 <svg aria-hidden="true" viewBox="0 0 24 24" className="h-[18px] w-[18px] fill-current">
                   <path d="M12 .9a11.1 11.1 0 0 0-3.51 21.63c.56.1.76-.24.76-.54v-2.08c-3.1.68-3.76-1.31-3.76-1.31-.5-1.3-1.24-1.65-1.24-1.65-1.01-.7.08-.69.08-.69 1.12.08 1.7 1.15 1.7 1.15.99 1.7 2.6 1.21 3.23.93.1-.72.39-1.21.7-1.49-2.47-.28-5.07-1.24-5.07-5.51 0-1.22.44-2.21 1.15-2.99-.12-.28-.5-1.42.11-2.95 0 0 .94-.3 3.05 1.14a10.6 10.6 0 0 1 5.55 0c2.11-1.44 3.05-1.14 3.05-1.14.61 1.53.23 2.67.11 2.95.72.78 1.15 1.77 1.15 2.99 0 4.28-2.6 5.22-5.08 5.5.4.35.76 1.02.76 2.06v3.09c0 .3.2.65.77.54A11.1 11.1 0 0 0 12 .9Z" />
                 </svg>

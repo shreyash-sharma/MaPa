@@ -72,8 +72,8 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import java.util.Locale
 
-/** The link a parent taps. A custom scheme until MaPa has a verified web domain for App Links. */
-fun inviteLink(code: String) = "mapa://join/$code"
+/** Existing Modal landing page distributes the Parent APK and displays the invitation code. */
+fun inviteLink(code: String) = "https://shreyash-sharma--mapa-web-web.us-east.modal.run/invite/?code=$code"
 
 /**
  * Family-started setup. The family member fills everything in; the parent's phone only asks

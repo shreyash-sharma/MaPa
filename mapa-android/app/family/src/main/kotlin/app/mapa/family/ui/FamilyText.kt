@@ -101,8 +101,8 @@ class FamilyText(val lang: Lang) {
     val sendWhatsApp = t("Send on WhatsApp", "WhatsApp पर भेजें")
     fun waiting(name: String) = t("Waiting for $name to tap Yes", "$name के हाँ दबाने का इंतज़ार")
     fun shareText(name: String, link: String, code: String) = t(
-        "$name, I set up MaPa for you. Install the MaPa app, then tap this link: $link\nIf it doesn't open, type this code in MaPa: $code",
-        "$name, मैंने आपके लिए MaPa सेट किया है। MaPa ऐप इंस्टॉल करें, फिर यह लिंक दबाएँ: $link\nअगर न खुले, तो MaPa में यह कोड डालें: $code",
+        "$name, I set up MaPa for you. Open this page to download the Parent app: $link\nAfter installing, open MaPa and enter this invitation code: $code. Then tap Yes to accept.",
+        "$name, मैंने आपके लिए MaPa सेट किया है। Parent app डाउनलोड करने के लिए यह पेज खोलें: $link\nइंस्टॉल करने के बाद MaPa खोलें और यह निमंत्रण कोड डालें: $code। फिर स्वीकार करने के लिए Yes दबाएँ।",
     )
     fun addNumber(name: String) = t("Add $name's number for one-tap calling", "एक टैप में कॉल के लिए $name का नंबर जोड़ें")
     fun call(name: String) = t("Call $name", "$name को कॉल करें")
