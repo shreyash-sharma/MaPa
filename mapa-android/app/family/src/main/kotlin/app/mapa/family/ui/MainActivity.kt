@@ -108,8 +108,8 @@ import app.mapa.shared.ui.GroupDivider
 import app.mapa.shared.ui.GroupRow
 import app.mapa.shared.ui.Mapa
 import app.mapa.shared.ui.MapaTheme
-import app.mapa.shared.ui.SampleDemoRole
-import app.mapa.shared.ui.SampleDemoScreen
+import app.mapa.shared.ui.DemoRole
+import app.mapa.shared.ui.DemoAppScreen
 import app.mapa.shared.ui.ParentCardView
 import app.mapa.shared.ui.Eyebrow
 import app.mapa.shared.ui.PrimaryButton
@@ -144,7 +144,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             MapaTheme(dark = debugTheme() ?: androidx.compose.foundation.isSystemInDarkTheme()) {
                 Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    if (demoMode) SampleDemoScreen(SampleDemoRole.FAMILY) else FamilyRoot()
+                    if (demoMode) DemoAppScreen(DemoRole.FAMILY) else FamilyRoot()
                 }
             }
         }

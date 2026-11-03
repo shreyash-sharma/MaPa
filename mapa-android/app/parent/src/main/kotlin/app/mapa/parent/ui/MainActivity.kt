@@ -18,8 +18,8 @@ import app.mapa.core.pairing.InviteCodes
 import app.mapa.parent.Prefs
 import app.mapa.parent.collect.UsageProbe
 import app.mapa.shared.ui.MapaTheme
-import app.mapa.shared.ui.SampleDemoRole
-import app.mapa.shared.ui.SampleDemoScreen
+import app.mapa.shared.ui.DemoRole
+import app.mapa.shared.ui.DemoAppScreen
 import java.util.Locale
 
 class MainActivity : ComponentActivity() {
@@ -45,7 +45,7 @@ class MainActivity : ComponentActivity() {
                     val text = remember(lang) { ParentText(lang) }
                     val setLang = { l: Lang -> lang = l; prefs.lang = l }
                     when {
-                        demoMode -> SampleDemoScreen(SampleDemoRole.PHONE_OWNER)
+                        demoMode -> DemoAppScreen(DemoRole.PHONE_OWNER)
                         !consented && code.isBlank() -> NoInviteScreen(text, lang, setLang) { pendingCode = it; prefs.pendingCode = it }
                         !consented -> ConsentScreen(
                             text, code, lang, setLang, ::speak,

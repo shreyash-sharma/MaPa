@@ -6,7 +6,7 @@ import { DemoPlayers } from "./DemoPlayers";
 
 export const metadata: Metadata = {
   title: "Try the live demo · MaPa",
-  description: "Try MaPa's parent and family Android apps side by side in live Limrun emulators.",
+  description: "Try MaPa's parent and family Android apps side by side in live Limrun emulators, with 7-day and 30-day histories.",
 };
 
 const APPS = [
@@ -58,7 +58,7 @@ export default function TryPage() {
               <Link href="/docs/results/" className="text-terracotta-ink underline underline-offset-4">Research results</Link>
             </div>
           </div>
-          <p className="mt-4 max-w-4xl text-xs leading-relaxed text-ink-faint">One identity-free, model-derived day powers both apps. No calls, messages, or notifications are sent.</p>
+          <p className="mt-4 max-w-4xl text-xs leading-relaxed text-ink-faint">Demo data: identity-free, model-derived histories for Ma (7 days) and Papa (30 days); alerts are illustrative. No calls, messages, or push notifications are sent.</p>
         </div>
       </main>
       <Footer />
