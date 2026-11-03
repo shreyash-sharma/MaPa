@@ -19,7 +19,7 @@ export default function InviteContent() {
         <p className="mt-2 font-medium text-ink">Ask your family member to send you the invitation code on WhatsApp.</p>
       )}
       <p className="mt-3 text-sm leading-relaxed text-ink-muted">
-        In MaPa, choose “I have an invitation code” and enter these six characters. You will see the request before you accept it.
+        In MaPa, choose “I have a code” and enter these six characters. You will see the request before you accept it.
       </p>
     </div>
   );
