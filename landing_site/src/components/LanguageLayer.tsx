@@ -6,8 +6,8 @@ import config from "@/i18n/languages.json";
 import { applyAttr, applyUnit, attrKeys, idOf, rootOf, unitOf, units, written, writtenAttrs, ATTRS, type Dict } from "@/i18n/dom";
 import { setDictionary } from "@/i18n/runtime";
 
-/* Shows the site in the visitor's language. Ten languages ship with the site; any other on the allowlist is
-   translated by Meta's Muse Spark Open on the first visit, stored on the server, and served to everyone after.
+/* Shows the site in the visitor's language. Hindi ships with the site; the other active languages are translated
+   by Meta's Muse Spark Open on first visit, stored on the server, and served to everyone after.
    The language is chosen before React runs (see layout.tsx), so the hero can skip its word-split animation. */
 
 type Lang = { name: string; native: string; rtl?: boolean };

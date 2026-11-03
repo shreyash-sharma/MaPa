@@ -133,7 +133,7 @@ export function EarlyAccess() {
           {status.text}
         </p>
         <p data-reveal className="font-mono text-xs text-nocturne-faint">
-          Parent app on Android · Family app on Android and the web · Hindi and English
+          Parent app on Android · English, Hindi, Marathi, Tamil and French · Muse Spark via Baseten
         </p>
       </div>
     </section>
