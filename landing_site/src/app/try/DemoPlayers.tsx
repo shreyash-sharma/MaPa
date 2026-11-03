@@ -75,7 +75,7 @@ export function DemoPlayers({ apps }: { apps: DemoApp[] }) {
       <section aria-label="Live Android app demos">
         <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-sm text-ink-muted">Two independent Android emulators. Launch both together or open one app.</p>
-          <button type="button" disabled={busy || bothActive} onClick={() => void startApps(missing)} className="inline-flex min-h-14 shrink-0 items-center justify-center gap-2 rounded-full bg-ink px-8 py-3 text-base font-semibold text-white shadow-md transition hover:bg-terracotta-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink disabled:cursor-not-allowed disabled:opacity-50">
+          <button type="button" disabled={busy || bothActive} onClick={() => void startApps(missing)} className="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-full bg-terracotta-ink px-7 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-terracotta focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta-ink disabled:cursor-not-allowed disabled:opacity-55">
             {busy ? "Starting…" : bothActive ? "Both apps are running" : missing.length === 1 ? `Start ${missing[0].name}` : "Launch both apps"}
             {!busy && !bothActive && <span aria-hidden="true">→</span>}
           </button>

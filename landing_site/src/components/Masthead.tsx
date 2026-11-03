@@ -61,7 +61,7 @@ export function Masthead() {
         <div className="flex items-center gap-3 sm:gap-6">
           <Link
             href="/try/"
-            className="inline-flex min-h-11 items-center rounded-full bg-ink px-5 text-surface transition-colors hover:bg-terracotta-ink"
+            className="inline-flex min-h-11 items-center rounded-full bg-terracotta-ink px-5 text-surface shadow-sm transition-colors hover:bg-terracotta"
           >
             Try live demo
           </Link>
