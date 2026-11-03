@@ -30,6 +30,20 @@ android {
         versionName = "0.3.0"
     }
 
+    flavorDimensions += "distribution"
+    productFlavors {
+        create("play") {
+            dimension = "distribution"
+            buildConfigField("boolean", "JUDGE_DEMO_ENABLED", "false")
+        }
+        create("judgeDemo") {
+            dimension = "distribution"
+            applicationIdSuffix = ".judge"
+            versionNameSuffix = "-judge-demo"
+            buildConfigField("boolean", "JUDGE_DEMO_ENABLED", "true")
+        }
+    }
+
     buildTypes {
         debug {
             manifestPlaceholders["cleartext"] = "true"

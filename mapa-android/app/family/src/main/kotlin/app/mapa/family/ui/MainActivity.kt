@@ -151,7 +151,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun isSampleDemoIntent(intent: android.content.Intent?): Boolean =
-        app.mapa.family.BuildConfig.DEBUG && intent?.data?.let {
+        app.mapa.family.BuildConfig.JUDGE_DEMO_ENABLED && intent?.data?.let {
             it.scheme == "mapa" && it.host == "demo" && it.path == "/sample"
         } == true
 }

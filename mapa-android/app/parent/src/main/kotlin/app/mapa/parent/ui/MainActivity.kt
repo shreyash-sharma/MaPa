@@ -84,7 +84,7 @@ class MainActivity : ComponentActivity() {
         intent?.data?.takeIf { it.scheme == "mapa" && it.host == "join" }?.lastPathSegment?.let { InviteCodes.normalize(it) }
 
     private fun isSampleDemoIntent(intent: Intent?): Boolean =
-        app.mapa.parent.BuildConfig.DEBUG && intent?.data?.let {
+        app.mapa.parent.BuildConfig.JUDGE_DEMO_ENABLED && intent?.data?.let {
             it.scheme == "mapa" && it.host == "demo" && it.path == "/sample"
         } == true
 

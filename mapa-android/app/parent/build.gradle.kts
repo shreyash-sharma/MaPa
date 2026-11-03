@@ -48,6 +48,20 @@ android {
         // Optional: where to download the on-device note model (.task). Empty = adb push only (see README).
     }
 
+    flavorDimensions += "distribution"
+    productFlavors {
+        create("play") {
+            dimension = "distribution"
+            buildConfigField("boolean", "JUDGE_DEMO_ENABLED", "false")
+        }
+        create("judgeDemo") {
+            dimension = "distribution"
+            applicationIdSuffix = ".judge"
+            versionNameSuffix = "-judge-demo"
+            buildConfigField("boolean", "JUDGE_DEMO_ENABLED", "true")
+        }
+    }
+
     buildTypes {
         debug {
             // Cleartext only so the debug build can reach the local Firebase Emulator Suite.

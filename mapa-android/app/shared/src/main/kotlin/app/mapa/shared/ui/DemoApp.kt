@@ -174,7 +174,7 @@ fun DemoAppScreen(role: DemoRole) {
     val context = LocalContext.current
     val people = remember { loadDemoPeople(context) }
     val isFamily = role == DemoRole.FAMILY
-    var selectedName by remember { mutableStateOf("Ma") }
+    var selectedName by remember { mutableStateOf(if (role == DemoRole.FAMILY) "Ma" else "Papa") }
     var tab by remember { mutableStateOf(DemoTab.TODAY) }
     var selectedDayNumber by remember { mutableStateOf<Int?>(null) }
     var previewAlertKey by remember { mutableStateOf<String?>(null) }
@@ -190,7 +190,7 @@ fun DemoAppScreen(role: DemoRole) {
                 .padding(horizontal = Space.gutter).padding(bottom = Space.l),
         ) {
             Spacer(Modifier.height(Space.xl))
-            Eyebrow(if (isFamily) "FAMILY VIEW · ${person.name.uppercase()}" else "PHONE OWNER VIEW · MA")
+            Eyebrow(if (isFamily) "FAMILY VIEW · ${person.name.uppercase()}" else "PHONE OWNER VIEW · ${person.name.uppercase()}")
             Spacer(Modifier.height(Space.s))
             Text(
                 text = when (tab) {
@@ -208,7 +208,7 @@ fun DemoAppScreen(role: DemoRole) {
                 text = when (tab) {
                     DemoTab.TODAY -> if (isFamily) "Phone activity gives your family context. It cannot tell them why a day is quiet." else "Your phone-use rhythm, shared with family—with no camera, microphone, or location feed."
                     DemoTab.HISTORY -> "${person.name}'s ${person.historyDays}-day phone-use history, shared by day."
-                    DemoTab.ALERTS -> "Quiet-period check-ins from the demo history. No notification or message is sent."
+                    DemoTab.ALERTS -> "A record of quiet-period check-ins. Preview a message without sending it."
                     DemoTab.PEOPLE -> "Choose a family member to see their shared rhythm and history."
                     DemoTab.SHARING -> "You choose whether your phone-use rhythm is shared."
                 },
@@ -234,12 +234,6 @@ fun DemoAppScreen(role: DemoRole) {
                 DemoTab.PEOPLE -> PeopleDemo(people, selectedName) { name -> selectedName = name; tab = DemoTab.TODAY }
                 DemoTab.SHARING -> SharingDemo(sharingEnabled) { sharingEnabled = it }
             }
-            Spacer(Modifier.height(Space.xl))
-            Text(
-                "Phone activity can support a check-in. It cannot tell a family what a person is doing or whether they need help.",
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
             Spacer(Modifier.height(Space.xl))
         }
         DemoNavigation(isFamily, tab) { tab = it }
@@ -351,7 +345,7 @@ private fun AlertsDemo(people: List<DemoPerson>, previewAlertKey: String?, onPre
     val alerts = people.flatMap { person -> person.alerts.map { person to it } }.sortedBy { it.second.dayOffset }
     StoryPanel(
         title = "${alerts.size} CHECK-IN ALERTS IN THIS VIEW",
-        body = "Each entry follows a 12-hour stretch of continuous observed quiet. These entries are part of the app demo; no push notification is sent.",
+        body = "Each entry follows a 12-hour stretch of continuous observed quiet. Open a check-in preview to see how a family message could sound.",
     )
     Spacer(Modifier.height(Space.l))
     if (alerts.isEmpty()) {
@@ -422,11 +416,11 @@ private fun SharingDemo(enabled: Boolean, onChange: (Boolean) -> Unit) {
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.weight(1f)) {
                     Text("Share my daily rhythm", style = MaterialTheme.typography.titleMedium)
-                    Text(if (enabled) "Sharing is on" else "Sharing is paused", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(if (enabled) "Your rhythm is shared with family" else "Sharing is paused", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
                 Switch(checked = enabled, onCheckedChange = onChange)
             }
-            Text("The phone owner can pause sharing at any time. This demo switch changes only this screen.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text("The phone owner can pause sharing at any time.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
     Spacer(Modifier.height(Space.l))

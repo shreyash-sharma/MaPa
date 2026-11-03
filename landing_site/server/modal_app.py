@@ -48,8 +48,8 @@ image = (
         "MAPA_LANGUAGES_FILE": "/config/languages.json",
         "MAPA_CATALOG": "/config/en.json",
         "MAPA_TRANSLATE": TRANSLATE,
-        "MAPA_LIMRUN_PARENT_ASSET": "mapa-parent-judge-demo-v2.apk",
-        "MAPA_LIMRUN_FAMILY_ASSET": "mapa-family-judge-demo-v2.apk",
+        "MAPA_LIMRUN_PARENT_ASSET": "mapa-parent-judge-demo-2026-11-03.apk",
+        "MAPA_LIMRUN_FAMILY_ASSET": "mapa-family-judge-demo-2026-11-03.apk",
     })
     .add_local_file(LANGUAGES, "/config/languages.json")
     .add_local_file(CATALOG, "/config/en.json")
