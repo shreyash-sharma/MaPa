@@ -65,7 +65,7 @@ class LimrunDemoSessions:
                         "labels": {"app": "mapa-judge-demo", "role": role},
                     },
                     spec={
-                        "inactivity_timeout": "3m",
+                        "inactivity_timeout": "5m",
                         "hard_timeout": "10m",
                         "clues": [
                             {"kind": "OSVersion", "os_version": "15"},

@@ -12,6 +12,7 @@ import app.mapa.shared.Backend
 class ParentApp : Application() {
     override fun onCreate() {
         super.onCreate()
+        if (app.mapa.parent.BuildConfig.JUDGE_DEMO_ENABLED) return
         Backend.init(this)
         if (Prefs(this).consented) start(this)
     }

@@ -19,6 +19,7 @@ import app.mapa.shared.Backend
 class FamilyApp : Application() {
     override fun onCreate() {
         super.onCreate()
+        if (app.mapa.family.BuildConfig.JUDGE_DEMO_ENABLED) return
         Backend.init(this)
         CloudAi.load(this)
         Alerts.createChannel(this)

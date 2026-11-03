@@ -41,7 +41,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="mapa" android:host="join" />
             </intent-filter>
-            <!-- The simulator demo deep link is handled only by debug builds. -->
+            <!-- The judge-demo variant opens the local invitation walkthrough from this link. -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />

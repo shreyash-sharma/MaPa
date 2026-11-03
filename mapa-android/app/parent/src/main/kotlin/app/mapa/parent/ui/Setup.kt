@@ -145,6 +145,8 @@ fun ConsentScreen(
     speak: (String, Lang) -> Unit,
     onDecline: () -> Unit,
     onDone: () -> Unit,
+    demoPairing: ParentCloud.Pairing? = null,
+    onDemoAccept: (() -> Unit)? = null,
 ) {
     val ctx = LocalContext.current
     val prefs = remember { Prefs(ctx) }
@@ -157,8 +159,8 @@ fun ConsentScreen(
         androidx.activity.result.contract.ActivityResultContracts.RequestPermission(),
     ) { granted -> if (granted) MotionSignal.start(ctx); onDone() }
 
-    LaunchedEffect(code) {
-        val p = withContext(Dispatchers.IO) { runCatching { ParentCloud.fetchPairing(code) }.getOrNull() }
+    LaunchedEffect(code, demoPairing) {
+        val p = demoPairing ?: withContext(Dispatchers.IO) { runCatching { ParentCloud.fetchPairing(code) }.getOrNull() }
         if (p == null) failed = true
         else {
             pairing = p
@@ -178,26 +180,30 @@ fun ConsentScreen(
                 enabled = !busy,
                 leading = if (busy) ({ CircularProgressIndicator(Modifier.size(20.dp), strokeWidth = 2.dp, color = MaterialTheme.colorScheme.onPrimary) }) else null,
                 onClick = {
-                    busy = true
-                    scope.launch {
-                        val now = System.currentTimeMillis()
-                        prefs.name = p.parentName
-                        prefs.role = Role.of(p.role)
-                        prefs.consentAt = now
-                        val ok = withContext(Dispatchers.IO) {
-                            runCatching {
-                                val pid = ParentCloud.acceptPairing(p)
-                                ParentCloud.saveProfile(pid, prefs.profile(ZoneId.systemDefault().id), now)
-                            }.isSuccess
+                    if (onDemoAccept != null) {
+                        onDemoAccept()
+                    } else {
+                        busy = true
+                        scope.launch {
+                            val now = System.currentTimeMillis()
+                            prefs.name = p.parentName
+                            prefs.role = Role.of(p.role)
+                            prefs.consentAt = now
+                            val ok = withContext(Dispatchers.IO) {
+                                runCatching {
+                                    val pid = ParentCloud.acceptPairing(p)
+                                    ParentCloud.saveProfile(pid, prefs.profile(ZoneId.systemDefault().id), now)
+                                }.isSuccess
+                            }
+                            busy = false
+                            if (ok) {
+                                prefs.consented = true
+                                prefs.pendingCode = ""
+                                ParentApp.start(ctx)
+                                Scheduler.tickNow(ctx)
+                                if (MotionSignal.hasPermission(ctx)) onDone() else askMotion.launch(MotionSignal.permission)
+                            } else failed = true
                         }
-                        busy = false
-                        if (ok) {
-                            prefs.consented = true
-                            prefs.pendingCode = ""
-                            ParentApp.start(ctx)
-                            Scheduler.tickNow(ctx)
-                            if (MotionSignal.hasPermission(ctx)) onDone() else askMotion.launch(MotionSignal.permission)
-                        } else failed = true
                     }
                 },
             )

@@ -112,7 +112,7 @@ import java.util.UUID
 private data class Member(val uid: String, val name: String)
 
 @Composable
-fun HomeScreen(text: ParentText, onDeleted: () -> Unit) {
+fun HomeScreen(text: ParentText, onDeleted: () -> Unit, judgeDemo: Boolean = false) {
     val ctx = LocalContext.current
     val prefs = remember { Prefs(ctx) }
     val scope = rememberCoroutineScope()
@@ -124,7 +124,8 @@ fun HomeScreen(text: ParentText, onDeleted: () -> Unit) {
     var confirmDelete by remember { mutableStateOf(false) }
     var message by remember { mutableStateOf<String?>(null) }
     var taggedToday by remember { mutableStateOf<LifeTagKind?>(null) }
-    val pid = remember(refresh) { ParentCloud.parentId }
+    val pid = remember(refresh, judgeDemo) { if (judgeDemo) null else ParentCloud.parentId }
+    val visibleMembers = if (judgeDemo && prefs.consented) listOf(Member("local-family", "Riya")) else members
 
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { refresh++ }
     LaunchedEffect(Unit) {
@@ -134,7 +135,7 @@ fun HomeScreen(text: ParentText, onDeleted: () -> Unit) {
         }
     }
     DisposableEffect(pid) {
-        val reg = pid?.let { id ->
+        val reg = if (judgeDemo) null else pid?.let { id ->
             Db.members(id).addSnapshotListener { snap, _ ->
                 members = snap?.documents?.map { Member(it.id, it.getString("name") ?: "Family member") }.orEmpty()
             }
@@ -143,7 +144,7 @@ fun HomeScreen(text: ParentText, onDeleted: () -> Unit) {
     }
 
     fun runTick() = scope.launch {
-        withContext(Dispatchers.IO) { runCatching { ParentRuntime.tick(ctx, "manual") } }
+        if (!judgeDemo) withContext(Dispatchers.IO) { runCatching { ParentRuntime.tick(ctx, "manual") } }
         refresh++
     }
 
@@ -152,8 +153,10 @@ fun HomeScreen(text: ParentText, onDeleted: () -> Unit) {
     val togglePause = {
         paused = !paused
         prefs.paused = paused
-        scope.launch(Dispatchers.IO) { runCatching { ParentRuntime.publishPause(ctx) } }
-        if (!paused) Scheduler.tickAfterBinCloses(ctx)
+        if (!judgeDemo) {
+            scope.launch(Dispatchers.IO) { runCatching { ParentRuntime.publishPause(ctx) } }
+            if (!paused) Scheduler.tickAfterBinCloses(ctx)
+        }
         refresh++
         Unit
     }
@@ -191,7 +194,7 @@ fun HomeScreen(text: ParentText, onDeleted: () -> Unit) {
                 Spacer(Modifier.height(Space.l))
                 Text(
                     if (paused) androidx.compose.ui.text.AnnotatedString(text.pausedHome)
-                    else accentNames(text.sharingWith(members.map { it.name }), members.map { it.name }, Mapa.colors.accent),
+                    else accentNames(text.sharingWith(visibleMembers.map { it.name }), visibleMembers.map { it.name }, Mapa.colors.accent),
                     style = MaterialTheme.typography.displaySmall,
                     color = if (paused) Mapa.colors.paused else MaterialTheme.colorScheme.onBackground,
                 )
@@ -200,7 +203,7 @@ fun HomeScreen(text: ParentText, onDeleted: () -> Unit) {
                     if (!paused) text.onlyWhen else if (showPaused) text.pausedBody else text.pausedHiddenBody,
                     style = MaterialTheme.typography.bodyLarge,
                 )
-                if (pid == null) Notice(text.offlineStart)
+                if (pid == null && !judgeDemo) Notice(text.offlineStart)
                 Spacer(Modifier.height(Space.xxl))
                 Spacer(Modifier.height(Space.xxl))
                 if (paused) PrimaryButton(text.resume, togglePause, Modifier.heightIn(min = 72.dp))
@@ -220,8 +223,8 @@ fun HomeScreen(text: ParentText, onDeleted: () -> Unit) {
             Column(Modifier.padding(horizontal = Space.gutter)) {
                 SectionTitle(text.familyTitle, sub = text.familySub)
                 Group {
-                    if (members.isEmpty()) GroupRow { Text(text.noFamily, style = MaterialTheme.typography.bodyLarge) }
-                    members.forEachIndexed { i, m ->
+                    if (visibleMembers.isEmpty()) GroupRow { Text(text.noFamily, style = MaterialTheme.typography.bodyLarge) }
+                    visibleMembers.forEachIndexed { i, m ->
                         if (i > 0) GroupDivider()
                         GroupRow(
                             leading = { Initial(m.name) },
@@ -250,7 +253,7 @@ fun HomeScreen(text: ParentText, onDeleted: () -> Unit) {
                         Modifier.toggleable(value = showPaused, role = SemanticsRole.Switch, onValueChange = {
                             showPaused = it
                             prefs.showPaused = it
-                            pid?.let { id -> scope.launch(Dispatchers.IO) { runCatching { ParentCloud.saveProfile(id, prefs.profile(), prefs.consentAt) } } }
+                            if (!judgeDemo) pid?.let { id -> scope.launch(Dispatchers.IO) { runCatching { ParentCloud.saveProfile(id, prefs.profile(), prefs.consentAt) } } }
                         }),
                         trailing = { Switch(checked = showPaused, onCheckedChange = null) },
                     ) { Text(text.showPaused, style = MaterialTheme.typography.titleSmall) }

@@ -13,14 +13,18 @@ const APPS = [
   {
     id: "parent" as const,
     name: "Parent app",
-    role: "Papa · 30-day phone-owner view",
-    steps: ["Review today's rhythm and recent check-ins.", "Browse a month of daily activity."],
+    role: "Papa · parent app",
+    steps: ["Accept the family invitation.", "Pause sharing from the home screen."],
+    note: "Simple by design: Papa sees who can view his rhythm and can pause sharing in one tap. Other settings stay under More.",
+    languageNote: "Choose from 60 languages in the invitation. The parent app opens in the language the parent uses.",
   },
   {
     id: "family" as const,
     name: "Family app",
-    role: "Ma · 7-day family view",
-    steps: ["See the rhythm shared with family.", "Review alerts and preview a check-in message."],
+    role: "Family view · Ma and Papa",
+    steps: ["Explore Ma's 7-day and Papa's 30-day histories.", "Review alerts and preview a check-in message."],
+    note: undefined,
+    languageNote: undefined,
   },
 ];
 
@@ -40,7 +44,7 @@ export default function TryPage() {
             <div className="max-w-2xl">
               <p className="font-mono text-xs uppercase tracking-[0.16em] text-terracotta-ink">MaPa · live demo</p>
               <h1 className="mt-2 font-display text-4xl leading-[1.05] text-ink sm:text-5xl">See both sides of MaPa<span className="italic text-terracotta-ink">.</span></h1>
-              <p className="mt-3 max-w-xl text-base leading-relaxed text-ink-muted">Papa's 30-day phone-owner view beside Ma's 7-day family view. Open both Android apps live in the browser.</p>
+              <p className="mt-3 max-w-xl text-base leading-relaxed text-ink-muted">Papa accepts a family invitation in one step. The family app explores Ma's 7-day and Papa's 30-day histories.</p>
             </div>
             <div className="flex justify-center md:col-start-2 md:row-start-1">
               <a href="https://github.com/shreyash-sharma/MaPa/releases/tag/v0.3.0" target="_blank" rel="noreferrer" aria-label="Download Android APKs on GitHub" className="github-glass inline-flex min-h-12 items-center justify-center gap-2.5 rounded-full px-6 text-sm font-medium">
@@ -62,7 +66,7 @@ export default function TryPage() {
               <Link href="/docs/results/" className="text-terracotta-ink underline underline-offset-4">Research results</Link>
             </div>
           </div>
-          <p className="mt-4 max-w-4xl text-xs leading-relaxed text-ink-faint">Demo data: identity-free, model-derived histories for Ma (7 days) and Papa (30 days); alerts are illustrative. No calls, messages, or push notifications are sent.</p>
+          <p className="mt-4 max-w-4xl text-xs leading-relaxed text-ink-faint">Demo walkthrough: the invitation and identity-free, model-derived histories for Ma (7 days) and Papa (30 days) are illustrative. No calls, messages, or push notifications are sent.</p>
         </div>
       </main>
       <Footer />

@@ -3,7 +3,7 @@
 import { RemoteControl, type RemoteControlConnectionState } from "@limrun/ui";
 import { useEffect, useRef, useState } from "react";
 
-type DemoApp = { id: "parent" | "family"; name: string; role: string; steps: string[] };
+type DemoApp = { id: "parent" | "family"; name: string; role: string; steps: string[]; note?: string; languageNote?: string };
 type DemoSession = { id: string; role: DemoApp["id"]; endpointWebSocketUrl: string; token: string; sessionKey: string };
 type DemoConnections = Partial<Record<DemoApp["id"], RemoteControlConnectionState | null>>;
 
@@ -96,6 +96,10 @@ export function DemoPlayers({ apps }: { apps: DemoApp[] }) {
                 {active && session ? <RemoteControl url={session.endpointWebSocketUrl} token={session.token} sessionId={session.id} openUrl="mapa://demo/sample" className="h-full w-full" onConnectionStateChange={(state) => setConnections((current) => ({ ...current, [app.id]: state }))} onTerminated={() => { setSessions((current) => { const next = { ...current }; delete next[app.id]; return next; }); setMessage(`${app.name} emulator ended. You can start it again.`); }} /> :
                   <div className="flex h-full w-full flex-col items-center justify-center gap-3 bg-[radial-gradient(ellipse_at_top,#45413d,#171615_64%)] p-8 text-center text-white"><span className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/60">Limrun · Android</span><span className="font-display text-3xl">{app.name}</span><span className="text-sm text-white/70">Start the app to open it live.</span></div>}
               </div>
+              {(app.note || app.languageNote) && <div className="mx-auto mt-4 max-w-[400px] space-y-2 text-sm leading-relaxed text-ink-muted">
+                {app.note && <p>{app.note}</p>}
+                {app.languageNote && <p>{app.languageNote}</p>}
+              </div>}
               <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <ul className="list-disc pl-5 text-xs leading-relaxed text-ink-muted">{app.steps.map((step) => <li key={step}>{step}</li>)}</ul>
                 <button type="button" aria-pressed={active} disabled={busy} onClick={() => void toggleApp(app)} className="min-h-11 shrink-0 rounded-full border border-line-strong px-5 text-sm font-medium text-ink transition hover:border-terracotta hover:text-terracotta-ink disabled:opacity-50">{active ? "Stop app" : `Start ${app.name}`}</button>

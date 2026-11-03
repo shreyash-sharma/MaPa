@@ -45,7 +45,7 @@ import org.json.JSONObject
 
 enum class DemoRole { PHONE_OWNER, FAMILY }
 
-private enum class DemoTab { TODAY, HISTORY, ALERTS, PEOPLE, SHARING }
+private enum class DemoTab { TODAY, HISTORY, ALERTS, PEOPLE, SHARING, MORE }
 
 private data class DemoDay(
     val dayNumber: Int,
@@ -199,6 +199,7 @@ fun DemoAppScreen(role: DemoRole) {
                     DemoTab.ALERTS -> "Check-in history"
                     DemoTab.PEOPLE -> "People you follow"
                     DemoTab.SHARING -> "Your sharing settings"
+                    DemoTab.MORE -> "More"
                 },
                 style = MaterialTheme.typography.displaySmall,
                 modifier = Modifier.semantics { heading() },
@@ -211,6 +212,7 @@ fun DemoAppScreen(role: DemoRole) {
                     DemoTab.ALERTS -> "A record of quiet-period check-ins. Preview a message without sending it."
                     DemoTab.PEOPLE -> "Choose a family member to see their shared rhythm and history."
                     DemoTab.SHARING -> "You choose whether your phone-use rhythm is shared."
+                    DemoTab.MORE -> "Your history, check-ins and sharing settings."
                 },
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -233,6 +235,12 @@ fun DemoAppScreen(role: DemoRole) {
                 )
                 DemoTab.PEOPLE -> PeopleDemo(people, selectedName) { name -> selectedName = name; tab = DemoTab.TODAY }
                 DemoTab.SHARING -> SharingDemo(sharingEnabled) { sharingEnabled = it }
+                DemoTab.MORE -> MoreDemo(
+                    person = person,
+                    onHistory = { tab = DemoTab.HISTORY },
+                    onAlerts = { tab = DemoTab.ALERTS },
+                    onSharing = { tab = DemoTab.SHARING },
+                )
             }
             Spacer(Modifier.height(Space.xl))
         }
@@ -243,21 +251,25 @@ fun DemoAppScreen(role: DemoRole) {
 @Composable
 private fun TodayDemo(person: DemoPerson, isFamily: Boolean, onHistory: () -> Unit, onAlerts: () -> Unit) {
     val day = person.today
-    StoryPanel(
-        title = "TODAY'S RHYTHM · ${person.historyDays} DAYS OF HISTORY",
-        body = "${day.observedBins} observed 15-minute intervals · ${day.interactionTotal} phone interactions · ${day.chargingBins} charging intervals",
-    )
-    Spacer(Modifier.height(Space.l))
+    if (isFamily) {
+        StoryPanel(
+            title = "TODAY'S RHYTHM · ${person.historyDays} DAYS OF HISTORY",
+            body = "${day.observedBins} observed 15-minute intervals · ${day.interactionTotal} phone interactions · ${day.chargingBins} charging intervals",
+        )
+        Spacer(Modifier.height(Space.l))
+    }
     ParentCardView(
         name = person.name,
         card = demoCard(person, day),
         labels = CardLabels(today = "Today", lastUse = "Last observed phone use", usualFirst = "Profile's usual first use", timeOf = ::clockTime),
         expanded = isFamily,
     )
-    Spacer(Modifier.height(Space.l))
-    QuickLink(title = "${person.historyDays}-day history", detail = "See the daily activity rhythm", onClick = onHistory)
-    Spacer(Modifier.height(Space.s))
-    QuickLink(title = "${person.alerts.size} check-in alerts", detail = "Review the alert history", onClick = onAlerts)
+    if (isFamily) {
+        Spacer(Modifier.height(Space.l))
+        QuickLink(title = "${person.historyDays}-day history", detail = "See the daily activity rhythm", onClick = onHistory)
+        Spacer(Modifier.height(Space.s))
+        QuickLink(title = "${person.alerts.size} check-in alerts", detail = "Review the alert history", onClick = onAlerts)
+    }
     if (isFamily && person.name == "Ma") {
         Spacer(Modifier.height(Space.l))
         StoryPanel(title = "MA AND PAPA", body = "Ma's 7-day view and Papa's 30-day view are both available. Use the profile selector above to switch.")
@@ -428,6 +440,15 @@ private fun SharingDemo(enabled: Boolean, onChange: (Boolean) -> Unit) {
 }
 
 @Composable
+private fun MoreDemo(person: DemoPerson, onHistory: () -> Unit, onAlerts: () -> Unit, onSharing: () -> Unit) {
+    QuickLink(title = "${person.historyDays}-day history", detail = "See the daily activity rhythm", onClick = onHistory)
+    Spacer(Modifier.height(Space.s))
+    QuickLink(title = "${person.alerts.size} check-in alerts", detail = "Review the alert history", onClick = onAlerts)
+    Spacer(Modifier.height(Space.s))
+    QuickLink(title = "Sharing settings", detail = "Choose what your family can see", onClick = onSharing)
+}
+
+@Composable
 private fun QuickLink(title: String, detail: String, onClick: () -> Unit) {
     Surface(onClick = onClick, shape = MaterialTheme.shapes.medium, color = MaterialTheme.colorScheme.surfaceContainerLow, modifier = Modifier.fillMaxWidth()) {
         Row(Modifier.padding(Space.l), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
@@ -453,11 +474,11 @@ private fun StoryPanel(title: String, body: String) {
 @Composable
 private fun DemoNavigation(isFamily: Boolean, selected: DemoTab, onSelect: (DemoTab) -> Unit) {
     val tabs = if (isFamily) listOf(DemoTab.TODAY, DemoTab.HISTORY, DemoTab.ALERTS, DemoTab.PEOPLE)
-        else listOf(DemoTab.TODAY, DemoTab.HISTORY, DemoTab.ALERTS, DemoTab.SHARING)
+        else listOf(DemoTab.TODAY, DemoTab.MORE)
     NavigationBar(containerColor = MaterialTheme.colorScheme.surfaceContainerLow) {
         tabs.forEach { tab ->
             NavigationBarItem(
-                selected = selected == tab,
+                selected = if (isFamily) selected == tab else if (selected == DemoTab.TODAY) tab == DemoTab.TODAY else tab == DemoTab.MORE,
                 onClick = { onSelect(tab) },
                 icon = {},
                 label = { Text(tabTitle(tab)) },
@@ -472,6 +493,7 @@ private fun tabTitle(tab: DemoTab) = when (tab) {
     DemoTab.ALERTS -> "Alerts"
     DemoTab.PEOPLE -> "People"
     DemoTab.SHARING -> "Sharing"
+    DemoTab.MORE -> "More"
 }
 
 private fun dayLabel(offset: Int) = when (offset) {
